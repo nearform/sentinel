@@ -1,0 +1,213 @@
+<div ng-controller='SuiteCtrl'>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Test Suites</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <!-- /.panel -->
+    <div class="row" ng-show="viewMode === 'list'">
+        <div class="col-xs-10 col-sm-10 col-lg-10 text-right">
+            <button class="btn btn-sm btn-info margin-10" ng-click="change2Create()">
+                Create test suite
+            </button>
+            <br><br>
+        </div>
+    </div>
+
+    <div class="row" ng-show="viewMode === 'list'">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Available test suites
+                </div>
+
+                <div class="panel-body">
+                    <div class="panel-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Suite Name</th>
+                                    <th>Last test date</th>
+                                    <th>Last test result</th>
+                                    <th>Monitoring</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="suite in mite.suites">
+                                    <td><label>{{suite.name}}</label></td>
+                                    <td>{{suite.last_test_date ? (suite.last_test_date | date:'medium') :
+                                        'Never'}}</td>
+                                    <td align="center" ng-show="!suite.validated"><img src="/images/fail.png"
+                                                                                                   height="25"/></td>
+                                    <td align="center" ng-show="suite.validated"><img src="/images/ok.png"
+                                                                                                   height="25"/></td>
+
+                                    <td align="center" ng-show="!suite.monitoring"><img src="/images/fail.png"
+                                                                                                   height="25"/></td>
+                                    <td align="center" ng-show="suite.monitoring"><img src="/images/ok.png"
+                                                                                                   height="25"/></td>
+                                    <td class="text-center">
+                                        <button type="submit" ng-click="editSuiteFct(suite.id)"
+                                                class="btn btn-info"
+                                                >Edit
+                                        </button>
+                                        <button type="submit" ng-click="runSuite(mite.id, suite.id)"
+                                                class="btn btn-info"
+                                                >Run Once
+                                        </button>
+
+                                        <button type="submit" class="btn btn-success btn-outline"
+                                                ng-click="startMonitoring(mite.id, suite.id)" ng-show="!suite.monitoring">
+                                            Start monitoring
+                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-outline"
+                                                ng-click="stopMonitoring(mite.id, suite.id)" ng-show="suite.monitoring">
+                                            Stop monitoring
+                                        </button>
+
+                                        <a href="#/dashboard/suite_test/{{mite.id}}/suite/{{suite.id}}"
+                                           class="btn btn-info"
+                                                >Status
+                                        </a>
+                                        <button type="submit" class="btn btn-danger disabled"
+                                                ng-click="">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row" ng-show="viewMode === 'edit'">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i>Suite configuration
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group col-xs-8 col-sm-8 col-lg-8">
+                            <label>Suite name</label>
+                            <input class="form-control" name="name" autofocus ng-model="editSuite.name">
+                        </div>
+                        <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                            <div class="form-group">
+                                <label>Test time interval</label>
+                                <input class="form-control" name="name" autofocus ng-model="editSuite.monitor_interval">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-1 col-sm-1 col-lg-1">
+                            <label>
+                                <input type="checkbox" ng-model="editSuite.active" class="ng-pristine ng-valid">
+                                Active
+                            </label>
+                        </div>
+                        <div class="form-group col-xs-7 col-sm-7 col-lg-7">
+                            <label>Add URL to suite</label>
+                            <select class="form-control" ng-model="web_id" ng-click="addUrl()">
+                                <option ng-repeat="web in mite.process_status.web_stats" value="{{web.id}}">{{web.method}} - {{web.url}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+                        <table class="table table-striped table-bordered table-hover" ng-show="editSuite.urls">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        URL
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        Method
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        Action
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="web in editSuite.urls">
+                                <td>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        {{web.url}}
+                                    </div>
+                                    <div class="col-xs-2 col-sm-2 col-lg-2">
+                                        {{web.method}}
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-lg-6">
+                                        <button type="submit" ng-click="showConfiguration = !showConfiguration"
+                                                class="btn btn-info"
+                                                >Configure request
+                                        </button>
+                                        <button type="submit" class="btn btn-danger" ng-click="deleteUrl(web.id)">
+                                            Delete
+                                        </button>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-lg-12" ng-show="showConfiguration">
+                                        <div class="row">
+                                            <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                <label>
+                                                    <input type="checkbox" ng-model="web.authorized">
+                                                    Require auth token</label>
+                                            </div>
+                                            <div class="form-group col-xs-9 col-sm-9 col-lg-9">
+                                                <label>Request data</label>
+                                                <textarea rows="3" class="form-control" autofocus ng-model="web.request"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                <label>
+                                                    <input type="checkbox" ng-model="web.stop_on_error">
+                                                    Stop test on error</label>
+                                            </div>
+                                            <div class="form-group col-xs-9 col-sm-9 col-lg-9">
+                                                <label>Validate response data (use parambulator syntax)</label>
+                                                <textarea rows="3" class="form-control" name="name" autofocus ng-model="web.validate_response"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-sm btn-default margin-10" ng-click="saveSuite()">
+                        Save configuration
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-warning margin-10 btn-outline" ng-click="showList()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

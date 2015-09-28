@@ -1,0 +1,201 @@
+<div ng-controller='AppsCtrl'>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Applications</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <!-- /.panel -->
+    <div class="row" ng-show="viewMode === 'list'">
+        <div class="col-xs-10 col-sm-10 col-lg-10 text-right">
+            <button class="btn btn-sm btn-default margin-10" ng-click="change2Create()">
+                Connect another Mite
+            </button>
+            <br><br>
+        </div>
+
+    </div>
+    <div class="row" ng-show="viewMode === 'list'">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Available applications
+                </div>
+
+                <div class="panel-body">
+                    <div class="panel-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Last connect time</th>
+                                    <th>Connected</th>
+                                    <th>Protocol #</th>
+                                    <th>Monitoring</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="mite in mites">
+                                    <td><label>{{mite.name}}</label></td>
+                                    <td>{{mite.protocol}}://{{mite.host}}:{{mite.port}}</td>
+                                    <td>{{mite.last_connect_time ? (mite.last_connect_time | date:'medium') :
+                                        'Never'}}</td>
+                                    <td align="center" ng-show="'monitoring' !== mite.status"><img src="/images/fail.png"
+                                                                                                  height="25"/></td>
+                                    <td align="center" ng-show="'monitoring' === mite.status"><img src="/images/ok.png"
+                                                                                                  height="25"/></td>
+                                    <td>{{mite.protocol_version ? 'V' + mite.protocol_version :
+                                        'N/A'}}</td>
+                                    <td>
+                                        <button type="submit" class="btn btn-success btn-outline"
+                                                ng-click="startMonitoring(mite)" ng-show="!mite.monitoring">
+                                            Start monitoring
+                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-outline"
+                                                ng-click="stopMonitoring(mite)" ng-show="mite.monitoring">
+                                            Stop monitoring
+                                        </button>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" ng-click="editMite(mite)"
+                                                class="btn btn-info"
+                                                >Edit
+                                        </button>
+                                        <a href="#/dashboard/status/{{mite.id}}"
+                                                class="btn btn-info"
+                                                >Status
+                                        </a>
+                                        <a href="#/dashboard/alarm/{{mite.id}}"
+                                           class="btn btn-info"
+                                                >Alarms
+                                        </a>
+                                        <a href="#/dashboard/suite/{{mite.id}}"
+                                           class="btn btn-info"
+                                                >Test suites
+                                        </a>
+                                        <button type="submit" class="btn btn-danger disabled"
+                                                ng-click="">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row" ng-show="viewMode === 'edit'">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Mite configuration
+                </div>
+
+                <div class="panel-body">
+                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                        <label>Application name</label>
+                        <input class="form-control" name="name" autofocus ng-model="mite.name">
+                    </div>
+                    <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                        <label>Protocol</label>
+                        <select class="form-control" ng-model="mite.protocol">
+                            <option value="http">HTTP</option>
+                            <option value="https">HTTPS</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                        <label>Host</label>
+                        <input class="form-control" name="host" ng-model="mite.host">
+                    </div>
+                    <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                        <label>Port</label>
+                        <input class="form-control" name="port" ng-model="mite.port">
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-sm btn-info margin-10 disabled">
+                        Test connection
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="saveMite()">
+                        Save configuration
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-warning margin-10 btn-outline" ng-click="showList()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" ng-show="viewMode === 'edit' && mite.id">
+        <div class="col-xs-5 col-sm-5 col-lg-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Monitor configuration
+                </div>
+
+                <div class="panel-body">
+                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                        <label>Get application status time interval (s)</label>
+                        <input class="form-control" name="interval" ng-model="mite.monitor.interval">
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="saveMite()">
+                        Save configuration
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-warning margin-10 btn-outline" ng-click="showList()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-5 col-sm-5 col-lg-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Mite monitor configuration
+                </div>
+
+                <div class="panel-body">
+                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                        <label>Mite status rate time interval (s)</label>
+                        <input class="form-control" name="interval" ng-model="mite.configuration.rate_interval">
+                    </div>
+                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                        <label>Mite maximum samples</label>
+                        <input class="form-control" name="interval" ng-model="mite.configuration.max_samples">
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="saveMite()">
+                        Save configuration
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-warning margin-10 btn-outline" ng-click="showList()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
