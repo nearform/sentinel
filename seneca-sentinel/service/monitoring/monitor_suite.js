@@ -104,13 +104,17 @@ module.exports = function( options ) {
         var response = data.response
         var http_response = data.http_response
         var url = data.url
+        data.start = begin
+        data.err = err
 
         if( err ) {
-          var htt_status = "N/A"
+          var http_status = "N/A"
           if (err.code){
-            htt_status = err.code
+            http_status = err.code
           }
-          addHistory( {start: begin, err: err, response: response, url: url, http_status: htt_status, validated: false} )
+
+          data.validated = false
+          addHistory( data )
           if( urlConfig.stop_on_error ) {
             return done( err )
           }
@@ -120,8 +124,10 @@ module.exports = function( options ) {
         }
 
         validateResponse( response, urlConfig.validate_response, function( validate_result ) {
+          data.validated = validate_result
+
           if( validate_result.err ) {
-            addHistory( {start: begin, err: err, response: response, url: url, http_status: http_response.statusCode, validated: false, validation: validate_result} )
+            addHistory( data )
             if( urlConfig.stop_on_error ) {
               return done( err )
             }
@@ -130,24 +136,31 @@ module.exports = function( options ) {
             }
           }
 
-          addHistory( {start: begin, err: err, response: response, url: url, http_status: http_response.statusCode, validated: true, validation: validate_result} )
+          addHistory( data )
           done()
         } )
       } )
 
 
       function addHistory( operation ) {
+        var history = {}
         if( !operation.validated ) {
           monitor_context[mite.id][suite.id].validated = false
         }
 
+        history.request = {}
         if( urlConfig.request ) {
-          operation.request = {}
-          operation.request.body = urlConfig.request
+          history.request.body = urlConfig.request
         }
+        history.request.auth_token = operation.auth_token
+        history.response = operation.response
 
-        operation.end = new Date()
-        monitor_context[mite.id][suite.id].operations.push( operation )
+        history.start = operation.start
+        history.end = new Date()
+        history.url = operation.url
+        history.validated = operation.validated
+        history.err = operation.err
+        monitor_context[mite.id][suite.id].operations.push( history )
       }
 
 
@@ -199,60 +212,69 @@ module.exports = function( options ) {
         req.body = JSON.stringify( req_body )
       }
 
-//      if (urlConfig.authorized && cookies['seneca-login']){
-//        request.cookie('seneca-login' + '=' + cookies['seneca-login'])
-//      }
+      var response_data = {
+        url: url
+      }
+
+      if (urlConfig.authorized && monitor_context[mite.id][suite.id].cookie){
+        var cookie_str = 'seneca-login' + '=' + monitor_context[mite.id][suite.id].cookie
+        response_data.auth_token = cookie_str
+
+
+        var j = request.jar();
+        var cookie = request.cookie(cookie_str)
+        j.setCookie(cookie, url);
+        req.jar = j
+      }
 
       request[method]( req,
         function( err, response, body ) {
+          response_data.response = body
+          response_data.http_response = response
+
           if( err ) {
-            return done( err, {response: resp, http_response: response, url: url} )
+            return done( err, response_data )
+          }
+
+          try {
+            response_data.response = JSON.parse( body )
+          }
+          catch( err ) {
+            console.log( 'Received unexpected response: ' + body )
           }
 
           if( 200 != response.statusCode ) {
             // just try to parse response, maybe....
-            var resp = body
-            try {
-              resp = JSON.parse( body )
-            }
-            catch( err ) {
-            }
-
-            return done( 'Status Code: ' + response.statusCode, {response: resp, http_response: response, url: url} )
+            return done( 'Status Code: ' + response.statusCode, response_data )
           }
 
           // get auth-cookie - if exists
-          var cookies = parse_cookies(response)
-          var resp
-          try {
-            resp = JSON.parse( body )
-          }
-          catch( err ) {
-            console.log( 'Received unexpected response: ' + body )
-            return done( err, {response: resp, http_response: response, url: url} )
-          }
+          set_auth_cookie(response)
 
-          return done( err, {response: resp, http_response: response, url: url} )
+
+          return done( err, response_data )
         }
       )
     }
-  }
 
-  function parse_cookies(response){
-    var cookies = {}
-    if ( response.headers && response.headers['set-cookie'] ){
+    function set_auth_cookie(response){
+      if ( response.headers && response.headers['set-cookie'] ){
 
-      for (var i in response.headers['set-cookie']){
-        var cookie_str = response.headers['set-cookie'][i]
-        var index = cookie_str.indexOf('=')
-        if (index > 0){
-          var cookie_name = cookie_str.substr(0, index)
-          var cookie_value = cookie_str.substr(index)
-          cookies[cookie_name] = cookie_value
+        for (var i in response.headers['set-cookie']){
+          var cookie_str = response.headers['set-cookie'][i]
+          var index = cookie_str.indexOf('=')
+          if (index > 0){
+            var cookie_name = cookie_str.substr(0, index)
+            var cookie_value = cookie_str.substr(index + 1)
+            if (cookie_name === 'seneca-login'){
+              monitor_context[mite.id][suite.id].cookie = cookie_value.split(';')[0]
+              break
+            }
+
+          }
         }
       }
     }
-    return cookies
   }
 
   function start_monitor() {

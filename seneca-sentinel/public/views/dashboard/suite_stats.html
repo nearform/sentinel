@@ -113,17 +113,30 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row" ng-show="op.request">
+                                                    <div class="row" ng-show="op.request.body">
                                                         <div class="col-xs-12 col-sm-12 col-lg-12">
                                                             <hr>
                                                         </div>
                                                     </div>
-                                                    <div class="row" ng-show="op.request">
+                                                    <div class="row" ng-show="op.request.body">
                                                         <div class="col-xs-2 col-sm-2 col-lg-2">
                                                             <label>Request body:</label>
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
                                                             {{op.request.body}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-show="op.request.auth_token">
+                                                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                                                            <hr>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-show="op.request.auth_token">
+                                                        <div class="col-xs-2 col-sm-2 col-lg-2">
+                                                            <label>Request body token:</label>
+                                                        </div>
+                                                        <div class="col-xs-10 col-sm-10 col-lg-10">
+                                                            {{op.request.auth_token}}
                                                         </div>
                                                     </div>
                                                     <div class="row" ng-show="op.response">

@@ -31,7 +31,7 @@ angular.module( 'sbAdminApp' )
         $scope.web = {}
       }
 
-      $scope.saveSuite = function () {
+      $scope.saveSuite = function (done) {
         if ( !$scope.mite.suites ) {
           $scope.mite.suites = []
         }
@@ -47,7 +47,8 @@ angular.module( 'sbAdminApp' )
 
           restFactory.put( 'api/mite', $scope.mite, function () {
             generalServices.loadApplications( function () {
-              $scope.showList()
+//              $scope.showList()
+              if (done) done()
             } )
           } )
         }
@@ -59,7 +60,8 @@ angular.module( 'sbAdminApp' )
           // this is create
           restFactory.post( 'api/mite', $scope.mite, function () {
             generalServices.loadApplications( function () {
-              $scope.showList()
+//              $scope.showList()
+              if (done) done()
             } )
           } )
         }
@@ -135,6 +137,45 @@ angular.module( 'sbAdminApp' )
       }
 
       $scope.loadApplication()
+
+      $scope.moveUp = function ( web ) {
+        for (var i in $scope.editSuite.urls){
+          if ($scope.editSuite.urls[i].id === web.id){
+            if (i == 0){
+              break
+            }
+
+            var prev_index = parseInt(i) - 1
+            var prev = $scope.editSuite.urls[prev_index]
+            $scope.editSuite.urls[prev_index] = $scope.editSuite.urls[i]
+            $scope.editSuite.urls[i] = prev
+            $scope.saveSuite(function (){
+              $scope.editSuiteFct($scope.editSuite.id)
+            })
+            break
+          }
+        }
+      }
+
+      $scope.moveDown = function ( web ) {
+        for (var i in $scope.editSuite.urls){
+          if ($scope.editSuite.urls[i].id === web.id){
+            if (i == $scope.editSuite.urls.length - 1){
+              break
+            }
+
+            var next_index = parseInt(i) + 1
+            var next = $scope.editSuite.urls[next_index]
+            $scope.editSuite.urls[next_index] = $scope.editSuite.urls[i]
+            $scope.editSuite.urls[i] = next
+            $scope.saveSuite(function (){
+              $scope.editSuiteFct($scope.editSuite.id)
+            })
+            break
+          }
+        }
+      }
+
     }
   ]
   );

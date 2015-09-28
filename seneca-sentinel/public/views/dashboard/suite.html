@@ -134,10 +134,13 @@
                             <thead>
                             <tr>
                                 <th>
+                                    <div class="col-xs-2 col-sm-2 col-lg-2">
+                                        Position
+                                    </div>
                                     <div class="col-xs-4 col-sm-4 col-lg-4">
                                         URL
                                     </div>
-                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                    <div class="col-xs-2 col-sm-2 col-lg-2">
                                         Method
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-lg-4">
@@ -149,13 +152,21 @@
                             <tbody>
                             <tr ng-repeat="web in editSuite.urls">
                                 <td>
+                                    <div class="col-xs-2 col-sm-2 col-lg-2">
+                                        <button type="submit" ng-click="moveDown(web)" class="btn btn-info btn-outline">
+                                            <i class="fa fa-arrow-circle-o-down fa-fw"></i>
+                                        </button>
+                                        <button type="submit" ng-click="moveUp(web)" class="btn btn-info btn-outline">
+                                            <i class="fa fa-arrow-circle-o-up fa-fw"></i>
+                                        </button>
+                                    </div>
                                     <div class="col-xs-4 col-sm-4 col-lg-4">
                                         {{web.url}}
                                     </div>
                                     <div class="col-xs-2 col-sm-2 col-lg-2">
                                         {{web.method}}
                                     </div>
-                                    <div class="col-xs-6 col-sm-6 col-lg-6">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
                                         <button type="submit" ng-click="showConfiguration = !showConfiguration"
                                                 class="btn btn-info"
                                                 >Configure request
