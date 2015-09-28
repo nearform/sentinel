@@ -11,22 +11,22 @@ module.exports = function( options ) {
 
   var entities = seneca.export( 'constants/entities' )
   var mite_status = seneca.export( 'constants/mite_status' )
-  var monitor_data = {}
+  var monitor_context = {}
   var monitor_ids = {}
 
   function runOnce( args, done ) {
     var suite = args.suite
     var mite = args.mite
 
-    if( monitor_data[mite.id] && monitor_data[mite.id][suite.id] && monitor_data[mite.id][suite.id].running ) {
+    if( monitor_context[mite.id] && monitor_context[mite.id][suite.id] && monitor_context[mite.id][suite.id].running ) {
       return done( 'Suite test in progress, cannot run another test instance' )
     }
 
-    if( !monitor_data[mite.id] ) {
-      monitor_data[mite.id] = {}
+    if( !monitor_context[mite.id] ) {
+      monitor_context[mite.id] = {}
     }
 
-    monitor_data[mite.id][suite.id] = {
+    monitor_context[mite.id][suite.id] = {
       running: true,
       start: new Date(),
       operations: [],
@@ -43,22 +43,23 @@ module.exports = function( options ) {
         mite_id: mite.id,
         name: suite.name,
         suite_id: suite.id,
-        start: monitor_data[mite.id][suite.id].start,
+        start: monitor_context[mite.id][suite.id].start,
         operations: []
       } ).save$( function( err, test ) {
 
       if( err ) {
-        monitor_data[mite.id][suite.id].running = false
+        monitor_context[mite.id][suite.id].running = false
         return
       }
       console.log( 'run test suite' + suite.name )
 
-      async.each( suite.urls, runTestUrl, function( err ) {
-        var data = monitor_data[mite.id][suite.id]
+      async.eachSeries( suite.urls, runTestUrl, function( err, results ) {
+        var data = monitor_context[mite.id][suite.id]
+        var context = monitor_context[mite.id][suite.id]
         test.operations = data.operations
         test.end = new Date()
 
-        monitor_data[mite.id][suite.id].running = false
+        monitor_context[mite.id][suite.id] = {}
 
         test.validated = true
         for( var i in test.operations ) {
@@ -78,7 +79,7 @@ module.exports = function( options ) {
             for( var i in mite.suites ) {
               if( mite.suites[i].id === suite.id ) {
                 mite.suites[i].last_test_date = test.end
-                mite.suites[i].validated = monitor_data[mite.id][suite.id].validated
+                mite.suites[i].validated = context.validated
               }
               if( !mite.suites[i].validated ) {
                 mite.suites_validated = false
@@ -105,7 +106,11 @@ module.exports = function( options ) {
         var url = data.url
 
         if( err ) {
-          addHistory( {start: begin, err: err, response: response, url: url, http_status: "N/A", validated: false} )
+          var htt_status = "N/A"
+          if (err.code){
+            htt_status = err.code
+          }
+          addHistory( {start: begin, err: err, response: response, url: url, http_status: htt_status, validated: false} )
           if( urlConfig.stop_on_error ) {
             return done( err )
           }
@@ -133,7 +138,7 @@ module.exports = function( options ) {
 
       function addHistory( operation ) {
         if( !operation.validated ) {
-          monitor_data[mite.id][suite.id].validated = false
+          monitor_context[mite.id][suite.id].validated = false
         }
 
         if( urlConfig.request ) {
@@ -142,7 +147,7 @@ module.exports = function( options ) {
         }
 
         operation.end = new Date()
-        monitor_data[mite.id][suite.id].operations.push( operation )
+        monitor_context[mite.id][suite.id].operations.push( operation )
       }
 
 
@@ -202,9 +207,19 @@ module.exports = function( options ) {
           }
 
           if( 200 != response.statusCode ) {
+            // just try to parse response, maybe....
+            var resp = body
+            try {
+              resp = JSON.parse( body )
+            }
+            catch( err ) {
+            }
+
             return done( 'Status Code: ' + response.statusCode, {response: resp, http_response: response, url: url} )
           }
 
+          // get auth-cookie - if exists
+          var cookies = parse_cookies(response)
           var resp
           try {
             resp = JSON.parse( body )
@@ -218,6 +233,25 @@ module.exports = function( options ) {
         }
       )
     }
+  }
+
+  function parse_cookies(response){
+    var cookies = {}
+    if ( response.headers && response.headers.cookies ){
+
+      for (var i in response.headers['set-cookies']){
+        var cookie_str = response.headers.cookies[i]
+        var index = cookie_str.indexOf('=')
+        if (index > 0){
+          var cookie_name = cookie_str.substr(0, index)
+          var cookie_value = cookie_str.substr(index)
+          cookies[cookie_name] = cookie_value
+        }
+      }
+
+
+    }
+    return cookies
   }
 
   function start_monitor() {

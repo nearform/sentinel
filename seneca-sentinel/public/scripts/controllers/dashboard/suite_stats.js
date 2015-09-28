@@ -23,6 +23,14 @@ angular.module( 'sbAdminApp' )
 
       $scope.loadApplication()
       $scope.loadSuiteTests()
+
+      $scope.runSuite = function (  ) {
+        restFactory.post( 'api/mite/' + $scope.mite_id + '/suite/' + $scope.suite_id + '/run/once', {}, function () {
+          $scope.loadApplication( function () {
+          } )
+        } )
+      }
+
     }
   ]
   );

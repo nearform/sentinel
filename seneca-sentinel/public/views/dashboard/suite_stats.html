@@ -136,7 +136,7 @@
                                                             <label>Response:</label>
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
-                                                            {{op.response}}
+                                                           {{op.response}}
                                                         </div>
                                                     </div>
                                                     <div class="row" ng-show="op.validation">
@@ -192,6 +192,14 @@
                     </table>
 
 
+                </div>
+                <div class="panel-footer">
+                    <button type="button" ng-click="runSuite()" class="btn btn-info">
+                        Run Once
+                    </button>
+                    <a href="#/dashboard/suite/{{mite_id}}" class="btn btn-info">
+                        Test suites
+                    </a>
                 </div>
             </div>
         </div>
