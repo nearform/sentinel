@@ -157,36 +157,36 @@
                                                             <hr>
                                                         </div>
                                                     </div>
-                                                    <div class="row" ng-show="op.validation">
+                                                    <div class="row" ng-show="op.validate">
                                                         <div class="col-xs-2 col-sm-2 col-lg-2">
                                                             <label>Parambulator validation:</label>
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
-                                                            <div align="left" ng-show="op.validation.err"><img
+                                                            <div align="left" ng-show="op.validate.err"><img
                                                                     src="/images/fail.png" height="20"/></div>
-                                                            <div align="left" ng-show="!op.validation.err"><img
+                                                            <div align="left" ng-show="!op.validate.err"><img
                                                                     src="/images/ok.png" height="20"/></div>
                                                         </div>
                                                     </div>
-                                                    <div class="row" ng-show="op.validation">
+                                                    <div class="row" ng-show="op.validate">
                                                         <div class="col-xs-12 col-sm-12 col-lg-12">
                                                             <hr>
                                                         </div>
                                                     </div>
-                                                    <div class="row" ng-show="op.validation">
+                                                    <div class="row" ng-show="op.validate">
                                                         <div class="col-xs-2 col-sm-2 col-lg-2">
                                                             <label>Validate message:</label>
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
-                                                            {{op.validation.msg}}
+                                                            {{op.validate.msg.message ? op.validate.msg.message : op.validate.msg}}
                                                         </div>
                                                     </div>
-                                                    <div class="row" ng-show="op.validation">
+                                                    <div class="row" ng-show="op.validate">
                                                         <div class="col-xs-2 col-sm-2 col-lg-2">
                                                             <label>Validate scheme:</label>
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
-                                                            {{op.validation.scheme}}
+                                                            {{op.validate.scheme}}
                                                         </div>
                                                     </div>
 

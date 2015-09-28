@@ -19,7 +19,7 @@ module.exports = function( options ) {
     var mite = args.mite
 
     if( monitor_context[mite.id] && monitor_context[mite.id][suite.id] && monitor_context[mite.id][suite.id].running ) {
-      return done( 'Suite test in progress, cannot run another test instance' )
+      return done( null, {err: true, msg: 'Suite test in progress, cannot run another test instance'} )
     }
 
     if( !monitor_context[mite.id] ) {
@@ -124,7 +124,7 @@ module.exports = function( options ) {
         }
 
         validateResponse( response, urlConfig.validate_response, function( validate_result ) {
-          data.validated = validate_result
+          data.validate = validate_result
 
           if( validate_result.err ) {
             addHistory( data )
@@ -135,9 +135,10 @@ module.exports = function( options ) {
               return done()
             }
           }
-
-          addHistory( data )
-          done()
+          else{
+            addHistory( data )
+            done()
+          }
         } )
       } )
 
@@ -158,8 +159,9 @@ module.exports = function( options ) {
         history.start = operation.start
         history.end = new Date()
         history.url = operation.url
-        history.validated = operation.validated
         history.err = operation.err
+        history.validate = operation.validate
+
         monitor_context[mite.id][suite.id].operations.push( history )
       }
 
@@ -177,7 +179,7 @@ module.exports = function( options ) {
           var paramcheck = parambulator( scheme )
           paramcheck.validate( response, function( err ) {
             if( err ) {
-              return done( {err: true, msg: err, scheme: urlConfig.validate_response} )
+              return done( {err: true, msg: err.message || err, scheme: urlConfig.validate_response} )
             }
             done( {err: false, msg: 'Validated.', scheme: urlConfig.validate_response} )
           } )
