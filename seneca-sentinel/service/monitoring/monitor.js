@@ -261,4 +261,7 @@ module.exports = function( options ) {
     .add( {role: 'monitoring', suite_monitor: 'start'}, startSuiteMonitor )
     .add( {role: 'monitoring', suite_monitor: 'stop'}, stopSuiteMonitor )
     .add( 'init:monitor', init )
+
+  // @hack
+  init({}, function(){})
 }

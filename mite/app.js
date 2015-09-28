@@ -8,7 +8,7 @@ var cookieParser   = require('cookie-parser')
 var session        = require('express-session')
 
 // create a seneca instance
-var seneca = require('seneca')()
+var seneca = require('seneca')({log: 'print'})
 
 seneca.use('user')
 
@@ -28,6 +28,23 @@ app.use(session({secret:'seneca'}))
 
 app.use( seneca.export('web') )
 
+
+seneca
+  .add( {role: 'test', cmd: 'service1'}, function(msg, response) {
+    return response(null, {err: false, data: {something: "else"}})
+  } )
+
+seneca.act( {role: 'web', use: {
+  name: 'test',
+  prefix: '/api/',
+  pin: {role: 'test', cmd: '*'},
+  map: {
+    service1: {GET: true, alias: 'service1'}
+  }
+}} )
+
+
+
 loadModules()
 
 
@@ -35,4 +52,3 @@ function loadModules(){
   var server = http.createServer(app)
   server.listen( 3333 )
 }
-

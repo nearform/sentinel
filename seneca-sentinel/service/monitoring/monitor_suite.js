@@ -199,6 +199,9 @@ module.exports = function( options ) {
         req.body = JSON.stringify( req_body )
       }
 
+//      if (urlConfig.authorized && cookies['seneca-login']){
+//        request.cookie('seneca-login' + '=' + cookies['seneca-login'])
+//      }
 
       request[method]( req,
         function( err, response, body ) {
@@ -237,10 +240,10 @@ module.exports = function( options ) {
 
   function parse_cookies(response){
     var cookies = {}
-    if ( response.headers && response.headers.cookies ){
+    if ( response.headers && response.headers['set-cookie'] ){
 
-      for (var i in response.headers['set-cookies']){
-        var cookie_str = response.headers.cookies[i]
+      for (var i in response.headers['set-cookie']){
+        var cookie_str = response.headers['set-cookie'][i]
         var index = cookie_str.indexOf('=')
         if (index > 0){
           var cookie_name = cookie_str.substr(0, index)
@@ -248,8 +251,6 @@ module.exports = function( options ) {
           cookies[cookie_name] = cookie_value
         }
       }
-
-
     }
     return cookies
   }
