@@ -44,6 +44,13 @@ module.exports = function ( options ) {
       mite.process_status = mite.process_status || {}
       if (response.payload.os && response.payload.os.length > 0){
         mite.process_status.os = response.payload.os[response.payload.os.length - 1]
+        for (var i in mite.process_status.os.data){
+          console.log( mite.process_status.os.data[i] )
+          if (mite.process_status.os.data[i].data_type && 'memory_usage' === mite.process_status.os.data[i].data_type){
+            seneca.act("role: 'alarm', notify:'data'", { mite_id: mite.id, data: mite.process_status.os.data[i]}, function(){})
+          }
+        }
+
       }
 
       mite.process_status.seneca_stats = response.payload.seneca_stats

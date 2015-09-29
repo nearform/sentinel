@@ -1,146 +1,212 @@
 <div ng-controller='AlarmCtrl'>
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Alarm Settings for {{mite.name}}</h1>
-        </div>
-        <!-- /.col-lg-12 -->
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Alarm Settings for {{mite.name}}</h1>
     </div>
+    <!-- /.col-lg-12 -->
+</div>
 
-    <div class="row">
-        <div class="col-xs-10 col-sm-10 col-lg-10">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-bell fa-fw"></i> New Alarm
-                </div>
+<div class="row">
+    <div class="col-xs-10 col-sm-10 col-lg-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> New Alarm
+            </div>
 
-                <div class="panel-body">
-                    <div class="col-xs-4 col-sm-4 col-lg-4">
-                        <label>Name</label>
-                        <input class="form-control" name="name" autofocus ng-model="name">
-                    </div>
-                    <div class="col-xs-4 col-sm-4 col-lg-4">
-                        <label>Alarm Types</label>
-                        <select class="form-control" ng-model="alarm_type">
-                            <option value="Connection">Connection</option>
-                            <option value="Test Suite">Test Suite</option>
-                            <option value="mem_usage_percent">OS Memory Percent Usage</option>
-                        </select>
-                    </div>
+            <div class="panel-body">
+                <div class="col-xs-4 col-sm-4 col-lg-4">
+                    <label>Name</label>
+                    <input class="form-control" name="name" autofocus ng-model="alarm_name">
                 </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="addAlarm()">Add alarm</button>
+                <div class="col-xs-4 col-sm-4 col-lg-4">
+                    <label>Event Types</label>
+                    <select class="form-control" ng-model="alarm_type_id">
+                        <option ng-repeat="alarm in alarm_types" ng-value="alarm.type_id">{{alarm.label}}</option>
+                    </select>
                 </div>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="addAlarm()">Add alarm</button>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-xs-10 col-sm-10 col-lg-10">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-bell fa-fw"></i> Alarms
-                </div>
+<div class="row">
+    <div class="col-xs-10 col-sm-10 col-lg-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Alarms
+            </div>
 
-                <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                        <tr>
-                            <th>
-                                <div class="col-xs-5 col-sm-5 col-lg-5">Name</div>
-                                <div class="col-xs-3 col-sm-3 col-lg-3">Type</div>
-                                <div class="col-xs-1 col-sm-1 col-lg-1">Active</div>
-                                <div class="col-xs-3 col-sm-3 col-lg-3">Action</div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="alarm in mite.alarms">
-                            <td>
-                                <div class="col-xs-5 col-sm-5 col-lg-5">
-                                    <label>{{alarm.name}}</label>
-                                </div>
+            <div class="panel-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>
+                            <div class="col-xs-5 col-sm-5 col-lg-5">Name</div>
+                            <div class="col-xs-3 col-sm-3 col-lg-3">Type</div>
+                            <div class="col-xs-1 col-sm-1 col-lg-1">Active</div>
+                            <div class="col-xs-3 col-sm-3 col-lg-3">Action</div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="alarm in mite.alarms">
+                        <td>
+                            <div class="col-xs-5 col-sm-5 col-lg-5">
+                                <label>{{alarm.name}}</label>
+                            </div>
 
-                                <div class="col-xs-3 col-sm-3 col-lg-3">
-                                    <label>{{alarm.type}}</label>
-                                </div>
+                            <div class="col-xs-3 col-sm-3 col-lg-3">
+                                <label>{{alarm.type_label}}</label>
+                            </div>
 
-                                <div class="col-xs-1 col-sm-1 col-lg-1" ng-show="!alarm.active">
-                                    <img src="/images/fail.png" height="25"/>
-                                </div>
-                                <div class="col-xs-1 col-sm-1 col-lg-1" align="center" ng-show="alarm.active">
-                                    <img src="/images/ok.png" height="25"/>
-                                </div>
-                                <div class="col-xs-3 col-sm-3 col-lg-3">
-                                    <button type="submit" ng-click="showAlarmEdit = !showAlarmEdit"
+                            <div class="col-xs-1 col-sm-1 col-lg-1" ng-show="!alarm.active">
+                                <img src="/images/fail.png" height="25"/>
+                            </div>
+                            <div class="col-xs-1 col-sm-1 col-lg-1" align="center" ng-show="alarm.active">
+                                <img src="/images/ok.png" height="25"/>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-lg-3">
+                                <button type="submit" ng-show="!showAlarmEdit" ng-click="showAlarmEdit = !showAlarmEdit"
                                         class="btn btn-info"
                                         >Show edit
-                                    </button>
-                                    <button type="submit" class="btn btn-danger disabled"
+                                </button>
+                                <button type="submit" ng-show="showAlarmEdit" ng-click="showAlarmEdit = !showAlarmEdit"
+                                        class="btn btn-info"
+                                        >Close edit
+                                </button>
+                                <button type="submit" class="btn btn-danger disabled"
                                         ng-click="">
                                     Delete
-                                    </button>
+                                </button>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-lg-12" ng-show="showAlarmEdit">
+
+
+                                <div class="row">
+                                    <hr>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-lg-12" ng-show="showAlarmEdit">
-                                    <div class="row">
-                                        <hr>
+                                <div class="row">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>Name</label>
+                                        <input class="form-control" name="name" autofocus ng-model="alarm.name">
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xs-4 col-sm-4 col-lg-4">
-                                            <label>Name</label>
-                                            <input class="form-control" name="name" autofocus ng-model="alarm.name">
-                                        </div>
-                                        <div class="col-xs-4 col-sm-4 col-lg-4">
-                                            <label>Alarm Types</label>
-                                            <select class="form-control" ng-model="alarm.type">
-                                                <option value="Connection">Connection</option>
-                                                <option value="Test Suite">Test Suite</option>
-                                                <option value="Memory Usage">OS Memory Percent Usage</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xs-4 col-sm-4 col-lg-4">
-                                            <label>
-                                                <input type="checkbox" ng-model="alarm.active" class="ng-pristine ng-valid">
-                                                Active
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <hr>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4 col-sm-4 col-lg-4">
-                                            <label>
-                                                <input type="checkbox" ng-model="alarm.email_alarm_on" class="ng-pristine ng-valid">
-                                                Notify using email when alarm activates
-                                            </label>
-                                            <label>
-                                                <input type="checkbox" ng-model="alarm.email_alarm_off" class="ng-pristine ng-valid">
-                                                Notify using email when alarm de-activates
-                                            </label>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-lg-6">
-                                            <label>Email address</label>
-                                            <input class="form-control" name="name" ng-model="alarm.email">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <hr>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            <input type="checkbox" ng-model="alarm.active" class="ng-pristine ng-valid">
+                                            Active
+                                        </label>
                                     </div>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="7"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="saveMite()">
-                        Save configuration
-                    </button>
-                </div>
+
+
+                                <div class="row">
+                                    <hr>
+                                </div>
+                                <div class="row" ng-show="'bool' === alarm.type">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            Activate alarm when event is
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            <input type="radio" ng-model="alarm.alarm_on" value="1"
+                                                   class="ng-pristine ng-valid">
+                                            true
+                                        </label>&nbsp;&nbsp;
+                                        <label>
+                                            <input type="radio" ng-model="alarm.alarm_on" value="0"
+                                                   class="ng-pristine ng-valid">
+                                            false
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="'amount' === alarm.type">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            Activate alarm when value is above
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <div class="col-xs-4 col-sm-4 col-lg-4">
+                                            <input class="form-control" name="name" autofocus ng-model="alarm.alarm_on">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="'amount' === alarm.type">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            De-activate alarm when value is below
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <div class="col-xs-4 col-sm-4 col-lg-4">
+                                            <input class="form-control" name="name" autofocus
+                                                   ng-model="alarm.alarm_off">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <hr>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            <input type="checkbox" ng-model="alarm.email_alarm_on"
+                                                   class="ng-pristine ng-valid">
+                                            Notify using email when alarm activates
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" ng-model="alarm.email_alarm_off"
+                                                   class="ng-pristine ng-valid">
+                                            Notify using email when alarm de-activates
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-lg-6">
+                                        <label>Email address</label>
+                                        <input class="form-control" name="name" ng-model="alarm.email">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <hr>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                        <label>
+                                            <input type="checkbox" ng-model="alarm.dashboard_notification_alarm_on"
+                                                   class="ng-pristine ng-valid">
+                                            Create dashboard notification when alarm activates
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" ng-model="alarm.dashboard_notification_alarm_off"
+                                                   class="ng-pristine ng-valid">
+                                            Create dashboard notification when alarm de-activates
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="saveMite()">
+                    Save configuration
+                </button>
             </div>
         </div>
     </div>
+</div>
 </div>

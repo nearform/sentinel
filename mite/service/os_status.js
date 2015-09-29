@@ -24,7 +24,12 @@ module.exports = function( options ) {
     system.data.push( {name: 'Platform', value: os.platform()} )
     system.data.push( {name: 'Total memory', value: Math.floor( os.totalmem() / (1024 * 1024) ), um: 'MB'} )
     system.data.push( {name: 'Free memory', value: Math.floor( os.freemem() / (1024 * 1024) ), um: 'MB'} )
-    system.data.push( {name: 'Used memory', value: Math.floor( (os.totalmem() - os.freemem()) / (1024 * 1024) ), um: 'MB'} )
+    system.data.push( {
+      name: 'Used memory',
+      value: Math.floor( (os.totalmem() - os.freemem()) / (1024 * 1024) ),
+      data_type: 'memory_usage',
+      um: 'MB'
+    } )
 
     done( null, system )
   }
