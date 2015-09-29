@@ -1,3 +1,6 @@
+![Seneca](http://senecajs.surge.sh/files/assets/seneca-banner.png)
+> A [Seneca.js][] testing toolkit
+
 # Sentinel
 
 ## Purpose
@@ -37,3 +40,4 @@ The test system is composed from two different parts:
   * Project status - under development, do not use in production.
 
 
+[Seneca.js]: https://www.npmjs.com/package/seneca
