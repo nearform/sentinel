@@ -23,6 +23,8 @@ seneca.use( 'user' )
 seneca.use( 'auth', options.auth )
 seneca.use( 'local-auth' )
 
+//seneca.use( 'seneca-mail', options.mail )
+
 var app = express()
 app.enable( 'trust proxy' )
 

@@ -17,7 +17,15 @@ module.exports = function( options ) {
   }
 
   function createEmailNotification( args, done ) {
-    done()
+    return done()
+    //not working email implementation - do not use it until is OK
+    seneca.act( {
+      role: 'mail',
+      cmd: 'send',
+      html: args.message,
+      to: args.to,
+      subject: 'Sentinel alarm'
+    }, done )
   }
 
   seneca

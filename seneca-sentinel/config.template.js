@@ -11,5 +11,15 @@ module.exports = {
     "options": {
       "w": 1
     }
+  },
+  "mail": {
+    "mail": {
+      from: "contact@sentinel.com"
+    },
+    config: {
+      host: "127.0.0.1",
+      port: 25,
+      ignoreTLS: true
+    }
   }
 }
