@@ -30,6 +30,8 @@ angular.module( 'sbAdminApp' )
       $scope.loadOSStatus()
       $scope.loadSenecaStatus()
 
+      $scope.dataWithGraphs = ['load_1', 'load_5', 'load_15', 'used_memory']
+
       function ChartInit() {
         // Properties
         $scope.chartObject = {};

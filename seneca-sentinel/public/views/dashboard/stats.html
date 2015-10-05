@@ -23,6 +23,7 @@
                                         <th>Parameter</th>
                                         <th>Value</th>
                                         <th>UM</th>
+                                        <th>History</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -30,6 +31,9 @@
                                         <td>{{status.name}}</td>
                                         <td>{{status.value}}</td>
                                         <td>{{status.um}}</td>
+                                        <td><a ng-show=" dataWithGraphs.indexOf(status.data_type) != -1 " href="#/dashboard/status/{{mite.id}}/graph/{{status.data_type}}"
+                                               class="btn btn-info">History
+                                        </a></td>
                                     </tr>
                                     </tbody>
                                 </table>

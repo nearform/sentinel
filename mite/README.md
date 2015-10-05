@@ -1,3 +1,6 @@
+![Seneca](http://senecajs.surge.sh/files/assets/seneca-banner.png)
+> A [Seneca.js][] testing toolkit
+
 # Mite
 
 ## Description
