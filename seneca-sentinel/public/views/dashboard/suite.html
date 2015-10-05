@@ -124,7 +124,7 @@
                         <div class="form-group col-xs-7 col-sm-7 col-lg-7">
                             <label>Add URL to suite</label>
                             <select class="form-control" ng-model="web_id" ng-click="addUrl()">
-                                <option ng-repeat="web in mite.process_status.web_stats" value="{{web.id}}">{{web.method}} - {{web.url}}</option>
+                                <option ng-repeat="web in mite.web_api.data" value="{{web.id}}">{{web.method}} - {{web.url}}</option>
                             </select>
                         </div>
                     </div>

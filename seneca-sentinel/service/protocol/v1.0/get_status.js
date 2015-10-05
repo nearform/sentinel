@@ -55,43 +55,44 @@ module.exports = function( options ) {
 //      }
 //
 //      mite.process_status.seneca_stats = response.payload.seneca_stats
-//      mite.process_status.web_stats = merge_http_api( mite.process_status.web_stats, process_web_stats( response.payload.web_stats ) )
+      mite.web_api = process_web_stats( response.payload.web_stats )
 
-      saveSenecaStatus( response.payload.seneca_stats, function(){} )
-      saveWEBAPI( process_web_stats( response.payload.web_stats, function(){} ) )
+      saveSenecaStatus( response.payload.seneca_stats, function() {
+      } )
+//      saveWEBAPI( process_web_stats( response.payload.web_stats, function() {
+//      } ) )
       async.eachLimit( response.payload.os, 10, saveOSStatus, function() {
       } )
     }
 
     done( null, { response: response, mite: mite } )
+
+
+    function saveWEBAPI( status, done ) {
+      status.mite_id = mite.id
+      entities.getEntity( 'web_status', seneca, status ).save$( done )
+    }
+
+
+    function saveSenecaStatus( status, done ) {
+      status.mite_id = mite.id
+      entities.getEntity( 'seneca_status', seneca, status ).save$( done )
+    }
+
+
+    function saveOSStatus( status, done ) {
+      status.mite_id = mite.id
+      entities.getEntity( 'os_status', seneca, status ).save$( done )
+    }
   }
-
-  function saveWEBAPI( status, done ) {
-    entities.getEntity( 'web_status', seneca, status ).save$( done )
-  }
-
-  function saveSenecaStatus( status, done ) {
-    entities.getEntity( 'seneca_status', seneca, status ).save$( done )
-  }
-
-  function saveOSStatus( status, done ) {
-    entities.getEntity( 'os_status', seneca, status ).save$( done )
-  }
-
-
-  function merge_http_api( actual_config, remote_config ) {
-    actual_config = actual_config || []
-    remote_config = remote_config || []
-    actual_config = _.union( actual_config, remote_config )
-    actual_config = _.uniq( actual_config, function( n ) {
-      return n.method + '-' + n.url
-    } )
-    return actual_config
-  }
-
 
   function process_web_stats( web_stats ) {
-    var stats = []
+    var stats = {
+      data: []
+    }
+
+    stats.date = web_stats.date
+    delete web_stats.date
 
     for( var key in web_stats ) {
       var data = key.split( ';' )
@@ -101,8 +102,9 @@ module.exports = function( options ) {
         id: uuid()
       }
       obj = _.extend( obj, web_stats[key] )
-      stats.push( obj )
+      stats.data.push( obj )
     }
+
     return stats
   }
 
