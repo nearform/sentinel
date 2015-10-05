@@ -12,7 +12,7 @@ module.exports = function( options ) {
     var mite = args.mite
     if( mite.status === status.NOT_CONNECTED ) {
       // already notified
-      return
+      return done()
     }
     var notification = {
       type: 'error',
@@ -32,7 +32,7 @@ module.exports = function( options ) {
 
     if( mite.status === status.MONITORING ) {
       // already notified
-      return
+      return done()
     }
     var notification = {
       type: 'message',

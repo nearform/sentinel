@@ -15,6 +15,9 @@ module.exports = function( options ) {
       }
 
       seneca.act( "role:'transport', send: 'command'", {mite: mite, command: command}, function( err, response ) {
+        if (response.err){
+          return done(null, response)
+        }
 
         seneca.act( "role:'protocol', process_response: 'identify'", {mite: mite, response: response}, function( err, response ) {
 
@@ -35,7 +38,9 @@ module.exports = function( options ) {
       }
 
       seneca.act( "role:'transport', send: 'command'", {mite: mite, command: command}, function( err, response ) {
-
+        if (response.err){
+          return done(null, response)
+        }
         seneca.act( "role:'protocol_v" + mite.protocol_version + "', process_response: 'get_status'", {mite: mite, response: response}, function( err, response ) {
 
           done( null, response )
@@ -56,6 +61,9 @@ module.exports = function( options ) {
       }
 
       seneca.act( "role:'transport', send: 'command'", {mite: mite, command: command}, function( err, response ) {
+        if (response.err){
+          return done(null, response)
+        }
 
         seneca.act( "role:'protocol_v" + mite.protocol_version + "', process_response: 'configuration'", {mite: mite, response: response}, function( err, response ) {
 

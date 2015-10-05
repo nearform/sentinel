@@ -1,4 +1,4 @@
-app.factory( 'generalServices', ['$state', '$rootScope', '$http', 'restFactory', function ( $state, $rootScope, $http, restFactory ) {
+app.factory( 'generalServices', ['$state', '$rootScope', '$http', 'restFactory', '$interval', function ( $state, $rootScope, $http, restFactory, $interval ) {
   var functions = {}
 
   functions.getAuthStatus = function ( successHandler, faultHandler ) {
@@ -70,7 +70,7 @@ app.factory( 'generalServices', ['$state', '$rootScope', '$http', 'restFactory',
     restFactory.getList( "api/notification", function ( response ) {
       restFactory.set_data( "notificationNumber", response.data.newNotificationsNumber )
       restFactory.set_data( "notifications", response.data )
-      setTimeout( functions.loadNotifications, 2 * 60 * 1000 )
+//      setTimeout( functions.loadNotifications, 2 * 60 * 1000 )
     } )
   }
 
