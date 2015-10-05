@@ -79,7 +79,7 @@ module.exports = function( options ) {
             for( var i in mite.suites ) {
               if( mite.suites[i].id === suite.id ) {
                 mite.suites[i].last_test_date = test.end
-                mite.suites[i].validated = context.validated
+                mite.suites[i].validated = test.validated
               }
               if( !mite.suites[i].validated ) {
                 mite.suites_validated = false
@@ -114,8 +114,9 @@ module.exports = function( options ) {
           }
 
           data.validated = false
-          addHistory( data )
+          addOperationData( data )
           if( urlConfig.stop_on_error ) {
+            // stop next tests
             return done( err )
           }
           else {
@@ -127,42 +128,46 @@ module.exports = function( options ) {
           data.validate = validate_result
 
           if( validate_result.err ) {
-            addHistory( data )
+            data.validated = false
+
+            addOperationData( data )
             if( urlConfig.stop_on_error ) {
-              return done( err )
+              // stop next tests
+              return done( validate_result.err )
             }
             else {
               return done()
             }
           }
           else{
-            addHistory( data )
+            data.validated = true
+
+            addOperationData( data )
             done()
           }
         } )
       } )
 
 
-      function addHistory( operation ) {
-        var history = {}
-        if( !operation.validated ) {
-          monitor_context[mite.id][suite.id].validated = false
-        }
+      function addOperationData( operation ) {
+        var operation_data = {}
 
-        history.request = {}
+        operation_data.validated = operation.validated
+
+        operation_data.request = {}
         if( urlConfig.request ) {
-          history.request.body = urlConfig.request
+          operation_data.request.body = urlConfig.request
         }
-        history.request.auth_token = operation.auth_token
-        history.response = operation.response
+        operation_data.request.auth_token = operation.auth_token
+        operation_data.response = operation.response
 
-        history.start = operation.start
-        history.end = new Date()
-        history.url = operation.url
-        history.err = operation.err
-        history.validate = operation.validate
+        operation_data.start = operation.start
+        operation_data.end = new Date()
+        operation_data.url = operation.url
+        operation_data.err = operation.err
+        operation_data.validate = operation.validate
 
-        monitor_context[mite.id][suite.id].operations.push( history )
+        monitor_context[mite.id][suite.id].operations.push( operation_data )
       }
 
 
