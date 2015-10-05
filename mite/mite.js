@@ -8,7 +8,7 @@ module.exports = function( options ) {
   var seneca = this;
 
   function loadModules( done ) {
-    processInjectedFolders( ['constants', 'controller', 'protocol', 'service'], done )
+    processInjectedFolders( ['constants', 'controller', 'protocol', 'monitor', 'status'], done )
   }
 
   function processInjectedFolders( folders, done ) {

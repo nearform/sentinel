@@ -17,14 +17,14 @@ module.exports = function( options ) {
         os: system
       }
 
-      cmd_stats( function( err, stats ) {
+      seneca.act( "role: 'status', get: 'seneca'", function( err, stats ) {
         if( err ) {
           return done( err, {ok: false} )
         }
 
         payload.seneca_stats = stats
 
-        cmd_webstats( function( err, webstats ) {
+        seneca.act( "role: 'status', get: 'web'", function( err, webstats ) {
           if( err ) {
             return done( err, {ok: false} )
           }
@@ -38,12 +38,18 @@ module.exports = function( options ) {
 
 
   function cmd_stats( done ) {
-    seneca.act( 'role:seneca,stats:true', done )
+    seneca.act( 'role:seneca,stats:true', function( err, senstats ) {
+      senstats.date = new Date()
+      done(err, senstats)
+    } )
   }
 
 
   function cmd_webstats( done ) {
-    seneca.act( 'role:web,stats:true', done )
+    seneca.act( 'role:web,stats:true', function( err, webstats ) {
+      webstats.date = new Date()
+      done(err, webstats)
+    } )
   }
 
 

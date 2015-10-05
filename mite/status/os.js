@@ -54,5 +54,5 @@ module.exports = function( options ) {
   }
 
   seneca
-    .add( {role: 'mite', retrieve: 'os_status'}, cmd_retrieve_stats )
+    .add( {role: 'status', get: 'os'}, cmd_retrieve_stats )
 }

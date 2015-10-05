@@ -35,7 +35,7 @@ module.exports = function() {
 
 
   function monitorOS() {
-    seneca.act( "role:'mite', retrieve:'os_status'", function( err, statusData ) {
+    seneca.act( "role: 'status', get: 'os'", function( err, statusData ) {
       if( err ) {
         return
       }
