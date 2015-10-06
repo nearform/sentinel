@@ -11,6 +11,13 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
   var mite_status = seneca.export( 'constants/mite_status' )
 
+  var hist_data = {
+    'load_1': true,
+    'load_5': true,
+    'load_15': true,
+    'used_memory': true
+  }
+
   function get_status( args, done ) {
     var mite = args.mite
     var communication_context = args.communication_context
@@ -82,7 +89,18 @@ module.exports = function( options ) {
 
     function saveOSStatus( status, done ) {
       status.mite_id = mite.id
-      entities.getEntity( 'os_status', seneca, status ).save$( done )
+      entities.getEntity( 'os_status', seneca, status ).save$( function() {
+        if( status.data ) {
+          for( var i in status.data ) {
+            if( hist_data[status.data[i].data_type] ) {
+              status.data[i].mite_id = mite.id
+              status.data[i].date = new Date(status.timestamp)
+              entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$(  )
+            }
+          }
+        }
+        done()
+      } )
     }
   }
 

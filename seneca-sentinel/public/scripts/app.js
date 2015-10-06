@@ -150,6 +150,21 @@ var app =
           }
         }
       })
+      .state('dashboard.chart',{
+        url:'/status/:mite_id/chart/:data_type',
+        controller: 'ChartCtrl',
+        templateUrl:'views/dashboard/chart.html',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/dashboard/chart.js'
+              ]
+            })
+          }
+        }
+      })
       .state('dashboard.suite',{
         url:'/suite/:mite_id',
         controller: 'SuiteCtrl',

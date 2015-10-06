@@ -31,20 +31,12 @@
                                         <td>{{status.name}}</td>
                                         <td>{{status.value}}</td>
                                         <td>{{status.um}}</td>
-                                        <td><a ng-show=" dataWithGraphs.indexOf(status.data_type) != -1 " href="#/dashboard/status/{{mite.id}}/graph/{{status.data_type}}"
+                                        <td><a ng-show=" dataWithGraphs.indexOf(status.data_type) != -1 " href="#/dashboard/status/{{mite.id}}/chart/{{status.data_type}}"
                                                class="btn btn-info">History
                                         </a></td>
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                        </tab>
-
-                        <tab heading="OS History">
-                            <div class="panel-body">
-
-                                <div google-chart chart="chartObject" on-select="hideSeries(selectedItem)" style="height:1000px; width:100%;"></div>
-
                             </div>
                         </tab>
 
