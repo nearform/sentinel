@@ -31,10 +31,12 @@ angular.module( 'sbAdminApp' )
       $scope.loadUsers()
 
       $scope.change2Create = function () {
+        $scope.manage_user = {}
         $scope.viewMode = 'edit'
       }
 
       $scope.showList = function () {
+        $scope.manage_user = {}
         $scope.viewMode = 'list'
       }
 
@@ -97,6 +99,19 @@ angular.module( 'sbAdminApp' )
             $scope.saveClient()
           }
         }
+      }
+
+      $scope.selectUser = function (manage_user_id){
+        for (var i in $scope.users){
+          if ($scope.users[i].id === manage_user_id){
+            $scope.manage_user = angular.copy($scope.users[i])
+          }
+        }
+      }
+
+      $scope.saveUser = function (manage_user){
+      }
+      $scope.registerUser = function (manage_user){
       }
     }
   ]

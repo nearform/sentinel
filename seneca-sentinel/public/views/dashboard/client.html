@@ -94,20 +94,51 @@
         <div class="col-xs-5 col-sm-5 col-lg-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-bell fa-fw"></i> Users
+                    <i class="fa fa-bell fa-fw"></i> Manage user access to client
                 </div>
 
                 <div class="panel-body">
-                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
-                        <select class="form-control" ng-model="user_id">
-                            <option ng-repeat="user in users" ng-value="user.id">{{user.firstName}} {{user.lastName}}
-                            </option>
-                        </select>
+
+                    <div class="row">
+                        <div class="form-group col-xs-8 col-sm-8 col-lg-8">
+                            <select class="form-control" ng-model="user_id">
+                                <option ng-repeat="user in users" ng-value="user.id">{{user.firstName}} {{user.lastName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                            <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="addUser(user_id)">
+                                Add access
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
-                        <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="addUser(user_id)">
-                            Add user
-                        </button>
+                    <div class="row">
+                        <div class="table-responsive col-xs-12 col-sm-12 col-lg-12">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>FirstName</th>
+                                    <th>LastName</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="user in client.users">
+                                    <td>{{user.firstName}}</td>
+                                    <td>{{user.lastName}}</td>
+                                    <td class="text-center">
+                                        <button type="submit" class="btn btn-danger"
+                                                ng-click="removeUser(user.id)">
+                                            Drop access
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -121,45 +152,65 @@
         <div class="col-xs-5 col-sm-5 col-lg-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-bell fa-fw"></i> Users with access to this client
+                    <i class="fa fa-bell fa-fw"></i> Manage Users
                 </div>
 
                 <div class="panel-body">
 
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover">
-                            <thead>
-                            <tr>
-                                <th>FirstName</th>
-                                <th>LastName</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="user in client.users">
-                                <td>{{user.firstName}}</td>
-                                <td>{{user.lastName}}</td>
-                                <td class="text-center">
-                                    <button type="submit" class="btn btn-danger"
-                                            ng-click="removeUser(user.id)">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="7"></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="row">
+                        <div class="form-group col-xs-8 col-sm-8 col-lg-8">
+                            <select class="form-control" ng-model="manage_user_id">
+                                <option ng-repeat="user in users" ng-value="user.id">{{user.firstName}} {{user.lastName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                            <button type="submit" class="btn btn-sm btn-info margin-10" ng-click="selectUser(manage_user_id)">
+                                Edit user
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-danger margin-10 disabled" ng-click="deleteUser(manage_user_id)">
+                                Delete user
+                            </button>
+                        </div>
                     </div>
+
+
+                    <div class="row">
+                        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                            <label>First name</label>
+                            <input class="form-control" name="name" autofocus ng-model="manage_user.firstName">
+                        </div>
+                        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                            <label>Last name</label>
+                            <input class="form-control" name="name" autofocus ng-model="manage_user.lastName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                            <label>Email</label>
+                            <input class="form-control" name="name" autofocus ng-model="manage_user.email">
+                        </div>
+                        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                            <label>
+                            <input type="checkbox" ng-model="manage_user.admin"> Admin</label>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="panel-footer">
+                    <button type="submit" class="btn btn-sm btn-info margin-10 disabled" ng-click="saveUser(manage_user)" ng-show="manage_user.id">
+                        Save user
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-info margin-10 disabled" ng-click="registerUser(manage_user)" ng-show="!manage_user.id">
+                        Add user
+                    </button>
                     <button type="submit" class="btn btn-sm btn-warning margin-10" ng-click="showList()">
                         Back to client list
                     </button>
                 </div>
             </div>
         </div>
+
     </div>
 
 </div>

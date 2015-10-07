@@ -16,6 +16,15 @@ angular.module( 'sbAdminApp' )
       $scope.mite = {}
       $scope.displayMiteStatus
 
+      $scope.loadClients = function( successHandler ) {
+        restFactory.getList( 'api/client', function( response ) {
+          $scope.clients = response.data
+          if (successHandler){
+            successHandler()
+          }
+        } )
+      }
+
       $scope.displayStatus = function ( mite ) {
         if ( $scope.displayMiteStatus === mite ) {
           delete $scope.displayMiteStatus
@@ -86,6 +95,8 @@ angular.module( 'sbAdminApp' )
           } )
         } )
       }
+
+      $scope.loadClients()
     }
   ]
   );

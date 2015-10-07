@@ -9,14 +9,14 @@
             </li>
 
             <li ng-class="{active: collapseVar==1}">{{dropDown}}
-                <a href="" ng-click="check(1)"><i class="fa fa-wrench fa-fw"></i> Admin<span
+                <a href="" ng-click="check(1)"><i class="fa fa-wrench fa-fw"></i> Manage<span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" collapse="collapseVar!=1">
                     <li>
-                        <a ui-sref="dashboard.apps">Applications</a>
+                        <a ui-sref="dashboard.client">Clients</a>
                     </li>
                     <li>
-                        <a ui-sref="dashboard.client">Clients</a>
+                        <a ui-sref="dashboard.apps">Applications</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->

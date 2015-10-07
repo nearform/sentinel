@@ -7,7 +7,16 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function list( msg, response ) {
-    entities.User( seneca ).list$({fields$: {id: true, firstName: true, lastName: true}}, function( err, users ) {
+    entities.User( seneca ).list$(
+      {
+        fields$: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          admin: true,
+          email: true
+        }
+      }, function( err, users ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }

@@ -108,7 +108,14 @@
                 </div>
 
                 <div class="panel-body">
-                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                    <div class="form-group col-xs-4 col-sm-4 col-lg-4">
+                        <label>Client</label>
+                        <select class="form-control" ng-model="mite.client_id">
+                            <option ng-repeat="client in clients" ng-value="client.id" value="{{client.id}}">{{client.name}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-xs-8 col-sm-8 col-lg-8">
                         <label>Application name</label>
                         <input class="form-control" name="name" autofocus ng-model="mite.name">
                     </div>
