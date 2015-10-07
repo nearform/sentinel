@@ -21,18 +21,18 @@ module.exports = function( options ) {
   function list( msg, response ) {
     entities.getEntity( 'mite', seneca ).list$(
       {
-        fields$:
-        {
-          name: true,
-          protocol: true,
-          host: true,
-          port: true,
-          last_connect_time: true,
-          monitoring: true,
-          protocol_version: true,
-          status: true,
-          suites_validated: true
-        }
+//        fields$:
+//        {
+//          name: true,
+//          protocol: true,
+//          host: true,
+//          port: true,
+//          last_connect_time: true,
+//          monitoring: true,
+//          protocol_version: true,
+//          status: true,
+//          suites_validated: true
+//        }
       }, function( err, mites ) {
 
       if( err ) {

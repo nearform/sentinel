@@ -153,9 +153,13 @@
                 </div>
 
                 <div class="panel-body">
-                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
-                        <label>Get application status time interval (s)</label>
+                    <div class="form-group col-xs-5 col-sm-5 col-lg-5">
+                        <label>Sentinel status time interval(s)</label>
                         <input class="form-control" name="interval" ng-model="mite.monitor.interval">
+                    </div>
+
+                    <div class="alert alert-success">
+                        Set here time interval for Sentinel to contact the mite application for status information (default 60).
                     </div>
                 </div>
 
@@ -175,16 +179,24 @@
                 <div class="panel-heading">
                     <i class="fa fa-bell fa-fw"></i> Mite monitor configuration
                 </div>
-
                 <div class="panel-body">
-                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+
+                    <div class="form-group col-xs-5 col-sm-5 col-lg-5">
                         <label>Mite status rate time interval (s)</label>
                         <input class="form-control" name="interval" ng-model="mite.configuration.rate_interval">
                     </div>
-                    <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                    <div class="alert alert-success">
+                        Set here the mite time intervals for retrieving status data samples.
+                    </div>
+
+                    <div class="form-group col-xs-5 col-sm-5 col-lg-5">
                         <label>Mite maximum samples</label>
                         <input class="form-control" name="interval" ng-model="mite.configuration.max_samples">
                     </div>
+                    <div class="alert alert-success">
+                        Set here the mite maximum number of samples to keep in memory until next reporting to Sentinel application. If to large can affect the host application.
+                    </div>
+
                 </div>
 
                 <div class="panel-footer">

@@ -29,6 +29,9 @@ angular.module( 'sbAdminApp' )
         if ( !$scope.mite.monitor ) {
           $scope.mite.monitor = {}
         }
+        if ( !$scope.mite.configuration ) {
+          $scope.mite.configuration = {}
+        }
 
         if ( $scope.mite.id ) {
           // this is update
