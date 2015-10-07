@@ -47,18 +47,24 @@ angular.module( 'sbAdminApp' )
         {
           type_id: "1",
           type: 'bool',
-          label: 'Connection status'
+          label: 'Connection lost'
         },
         {
           type_id: "2",
           type: 'bool',
-          label: 'Test Suite Result'
+          label: 'Test Suite Failed'
         },
         {
           type_id: "3",
           type: 'amount',
           data_type: 'memory_usage',
-          label: 'OS memory usage'
+          label: 'OS memory usage level'
+        },
+        {
+          type_id: "4",
+          type: 'bool',
+          data_type: 'application_restarted',
+          label: 'Application restarted'
         }
       ]
     }

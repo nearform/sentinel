@@ -49,25 +49,9 @@ module.exports = function( options ) {
     if( response.payload ) {
       mite.last_connect_time = new Date()
 
-      //here I must save the status in a different collection
-//      mite.process_status = mite.process_status || {}
-//      if (response.payload.os && response.payload.os.length > 0){
-//        mite.process_status.os = response.payload.os[response.payload.os.length - 1]
-//        for (var i in mite.process_status.os.data){
-//          console.log( mite.process_status.os.data[i] )
-//          if (mite.process_status.os.data[i].data_type && 'memory_usage' === mite.process_status.os.data[i].data_type){
-//            seneca.act("role: 'alarm', notify:'data'", { mite_id: mite.id, data: mite.process_status.os.data[i]}, function(){})
-//          }
-//        }
-//      }
-//
-//      mite.process_status.seneca_stats = response.payload.seneca_stats
       mite.web_api = process_web_stats( response.payload.web_stats )
 
-      saveSenecaStatus( response.payload.seneca_stats, function() {
-      } )
-//      saveWEBAPI( process_web_stats( response.payload.web_stats, function() {
-//      } ) )
+      saveSenecaStatus( response.payload.seneca_stats)
       async.eachLimit( response.payload.os, 10, saveOSStatus, function() {
       } )
     }
@@ -75,15 +59,17 @@ module.exports = function( options ) {
     done( null, { response: response, mite: mite } )
 
 
-    function saveWEBAPI( status, done ) {
+    function saveSenecaStatus( status ) {
       status.mite_id = mite.id
-      entities.getEntity( 'web_status', seneca, status ).save$( done )
-    }
+      entities.getEntity( 'seneca_status', seneca ).load$({mite_id: mite.id}, function(err, db){
+        if (err) return
+        if (!db){
+          db = entities.getEntity('seneca_status', seneca)
+        }
+        db = _.extend(db, status)
 
-
-    function saveSenecaStatus( status, done ) {
-      status.mite_id = mite.id
-      entities.getEntity( 'seneca_status', seneca, status ).save$( done )
+        db.save$()
+      })
     }
 
 
@@ -92,17 +78,30 @@ module.exports = function( options ) {
       entities.getEntity( 'os_status', seneca, status ).save$( function() {
         if( status.data ) {
           for( var i in status.data ) {
+            status.data[i].mite_id = mite.id
+            status.data[i].date = new Date( status.timestamp )
             if( hist_data[status.data[i].data_type] ) {
-              status.data[i].mite_id = mite.id
-              status.data[i].date = new Date(status.timestamp)
-              entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$(  )
+              entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$()
             }
+            processAlarm(status.data[i])
           }
         }
         done()
       } )
     }
   }
+
+  function processAlarm(data){
+    if( 'application_restarted' === data.data_type ) {
+      seneca.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
+      return
+    }
+    if( 'memory_usage' === data.data_type ) {
+      seneca.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
+      return
+    }
+  }
+
 
   function process_web_stats( web_stats ) {
     var stats = {

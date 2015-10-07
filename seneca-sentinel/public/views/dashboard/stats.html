@@ -13,8 +13,8 @@
                     <tabset>
                         <tab heading="OS">
                             <div class="panel-body">
-                                <label>Report Time: <b>{{os_status.timestamp ?
-                                    (os_status.timestamp
+                                <label>Report Time: <b>{{os_status.date ?
+                                    (os_status.date
                                     | date:'medium') : 'Never'}}</b></label>
                                 <table class="table table-striped table-bordered table-hover"
                                        ng-show="os_status">

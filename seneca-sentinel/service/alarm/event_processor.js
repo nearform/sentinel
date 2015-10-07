@@ -49,6 +49,20 @@ module.exports = function( options ) {
             seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
           }
         }
+      },
+      bool: function( mite, alarm, data ) {
+        var current_value = data.value
+        var on_value = alarm.alarm_on
+        var off_value = alarm.alarm_off
+
+        if( current_value && on_value === '1' ) {
+          // notify alarm on
+          seneca.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
+        }
+        else {
+            // notify alarm off
+            seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
+        }
       }
     }
   }
@@ -121,7 +135,11 @@ module.exports = function( options ) {
     if (alarm.on){
       message =
         "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
-          " was activated with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
+          " was activated"
+      if (alarm.type !== 'bool'){
+        message = message +
+          " with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
+      }
 
       if (alarm.dashboard_notification_alarm_on){
         seneca.act("role:'notification', create:'dashboard'", {message: message})
@@ -134,7 +152,12 @@ module.exports = function( options ) {
     if (alarm.off){
       message =
         "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
-          " was stopped with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
+          " was de-activated"
+      if (alarm.type !== 'bool'){
+        message = message +
+          " with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
+      }
+
       if (alarm.dashboard_notification_alarm_off){
         seneca.act("role:'notification', create:'dashboard'", {message: message})
       }
