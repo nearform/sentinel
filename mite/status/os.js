@@ -23,15 +23,15 @@ module.exports = function( options ) {
     } )
 
     system.data.push( {
-      name: 'OS Uptime',
-      value: convertSecondsToDigitalClock( os.uptime() ),
-      data_type: 'os_uptime',
-      um: 'HH:MM:SS'} )
-
-    system.data.push( {
       name: 'APP Uptime',
       value: convertSecondsToDigitalClock( diff / 1000 ),
       data_type: 'app_uptime',
+      um: 'HH:MM:SS'} )
+
+    system.data.push( {
+      name: 'OS Uptime',
+      value: convertSecondsToDigitalClock( os.uptime() ),
+      data_type: 'os_uptime',
       um: 'HH:MM:SS'} )
 
     system.data.push( {

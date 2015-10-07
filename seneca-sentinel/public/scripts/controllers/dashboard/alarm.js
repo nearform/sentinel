@@ -44,6 +44,7 @@ angular.module( 'sbAdminApp' )
       }
 
       $scope.alarm_types = [
+/*
         {
           type_id: "1",
           type: 'bool',
@@ -54,6 +55,7 @@ angular.module( 'sbAdminApp' )
           type: 'bool',
           label: 'Test Suite Failed'
         },
+*/
         {
           type_id: "3",
           type: 'amount',

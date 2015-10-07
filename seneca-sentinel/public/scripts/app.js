@@ -165,6 +165,21 @@ var app =
           }
         }
       })
+      .state('dashboard.client',{
+        url:'/client',
+        controller: 'ClientCtrl',
+        templateUrl:'views/dashboard/client.html',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/dashboard/client.js'
+              ]
+            })
+          }
+        }
+      })
       .state('dashboard.suite',{
         url:'/suite/:mite_id',
         controller: 'SuiteCtrl',
