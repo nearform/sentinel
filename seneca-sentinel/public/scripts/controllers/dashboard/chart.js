@@ -93,7 +93,7 @@ angular.module( 'sbAdminApp' )
           $scope.chartObject.options = {
             width: 1200,
             height: 700,
-            "title": $scope.chart_data.data_label + " chart (today)",
+            "title": $scope.chart_data.data_label + " chart (last 24 hours)",
             "colors": ['#0000FF', '#009900', '#990000'],
             "defaultColors": ['#0000FF', '#990000', '#990000'],
             "isStacked": "true",

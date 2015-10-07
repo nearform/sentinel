@@ -94,11 +94,7 @@ module.exports = function( options ) {
     data.total = args.total_value
     data.data = []
 
-    var today = new Date()
-    today.setHours(0)
-    today.setMinutes(0)
-    today.setSeconds(0)
-    today.setMilliseconds(0)
+    var today = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
     entities.getEntity( 'os_status_instant', seneca ).list$(
       {
