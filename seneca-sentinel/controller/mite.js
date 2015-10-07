@@ -59,7 +59,7 @@ module.exports = function( options ) {
         return response( null, {err: true, msg: err} )
       }
 
-      mite = mite.data$( false )
+      mite = mite ? mite.data$( false ) : mite
 
       response( null, {err: false, data: mite} )
     } )
@@ -68,28 +68,28 @@ module.exports = function( options ) {
 
   function os_status( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'os_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, mite ) {
+    entities.getEntity( 'os_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
 
-      mite = mite.data$( false )
+      status = status ? status.data$( false ) : status
 
-      response( null, {err: false, data: mite} )
+      response( null, {err: false, data: status} )
     } )
   }
 
 
   function seneca_status( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'seneca_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, mite ) {
+    entities.getEntity( 'seneca_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
 
-      mite = mite.data$( false )
+      status = status ? status.data$( false ): status
 
-      response( null, {err: false, data: mite} )
+      response( null, {err: false, data: status} )
     } )
   }
 
