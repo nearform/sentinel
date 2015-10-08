@@ -60,8 +60,8 @@ module.exports = function( options ) {
           seneca.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
         }
         else {
-            // notify alarm off
-            seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
+          // notify alarm off
+          seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
         }
       }
     }
@@ -132,37 +132,37 @@ module.exports = function( options ) {
   function notifyAlarm( alarm, mite ) {
     // this can be changed to accept template messages - TBD
     var message = "N/A"
-    if (alarm.on){
+    if( alarm.on ) {
       message =
         "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
           " was activated"
-      if (alarm.type !== 'bool'){
+      if( alarm.type !== 'bool' ) {
         message = message +
           " with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
       }
 
-      if (alarm.dashboard_notification_alarm_on){
-        seneca.act("role:'notification', create:'dashboard'", {message: message})
+      if( alarm.dashboard_notification_alarm_on ) {
+        seneca.act( "role:'notification', create:'dashboard'", {message: message} )
       }
-      if (alarm.email_alarm_on){
-        seneca.act("role:'notification', create:'email'", {message: message, to: alarm.email})
+      if( alarm.email_alarm_on ) {
+        seneca.act( "role:'notification', send:'email'", {message: message, to: alarm.email} )
       }
     }
 
-    if (alarm.off){
+    if( alarm.off ) {
       message =
         "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
           " was de-activated"
-      if (alarm.type !== 'bool'){
+      if( alarm.type !== 'bool' ) {
         message = message +
           " with value: " + alarm.value + (alarm.um ? " " + alarm.um : "")
       }
 
-      if (alarm.dashboard_notification_alarm_off){
-        seneca.act("role:'notification', create:'dashboard'", {message: message})
+      if( alarm.dashboard_notification_alarm_off ) {
+        seneca.act( "role:'notification', create:'dashboard'", {message: message} )
       }
-      if (alarm.email_alarm_off){
-        seneca.act("role:'notification', create:'email'", {message: message, to: alarm.email})
+      if( alarm.email_alarm_off ) {
+        seneca.act( "role:'notification', send:'email'", {message: message, to: alarm.email} )
       }
     }
   }

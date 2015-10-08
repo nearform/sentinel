@@ -44,18 +44,16 @@ angular.module( 'sbAdminApp' )
       }
 
       $scope.alarm_types = [
-/*
         {
           type_id: "1",
           type: 'bool',
-          label: 'Connection lost'
+          label: 'Connection lost (not implemented)'
         },
         {
           type_id: "2",
           type: 'bool',
-          label: 'Test Suite Failed'
+          label: 'Test Suite Failed (not implemented)'
         },
-*/
         {
           type_id: "3",
           type: 'amount',
@@ -67,6 +65,12 @@ angular.module( 'sbAdminApp' )
           type: 'bool',
           data_type: 'application_restarted',
           label: 'Application restarted'
+        },
+        {
+          type_id: "5",
+          type: 'amount',
+          data_type: 'load_5',
+          label: 'Load Average 5 min'
         }
       ]
     }

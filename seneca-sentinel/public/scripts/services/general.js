@@ -2,7 +2,7 @@ app.factory( 'generalServices', ['$state', '$rootScope', '$http', 'restFactory',
   var functions = {}
 
   functions.getAuthStatus = function ( successHandler, faultHandler ) {
-    restFactory.getServices( 'auth/user' )
+    restFactory.getServices( 'auth/instance' )
       .success( function ( data ) {
         if ( !data.user ) {
           return processFaultHandler( faultHandler )
