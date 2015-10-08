@@ -102,7 +102,7 @@ module.exports = function( options ) {
 //      date: {"$lt": today},
       sort$: {date: -1},
       fields$: {name: true, value: true, date: true},
-      limit$: 200
+      limit$: 500
     }
     console.log(q)
     entities.getEntity( 'os_status_instant', seneca ).list$(
@@ -114,7 +114,7 @@ module.exports = function( options ) {
         db_data = []
       }
 
-      for( var i in db_data ) {
+      for( var i = db_data.length - 1; i--; i > 0 ) {
         var myDate = new Date( db_data[i].date )
         data.data_label = db_data[i].name
         data.data.push( {
