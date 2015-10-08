@@ -134,7 +134,7 @@ module.exports = function( options ) {
     var message = "N/A"
     if( alarm.on ) {
       message =
-        "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
+        "Alarm '" + alarm.name + "' for application '" + mite.name + "'" +
           " was activated"
       if( alarm.type !== 'bool' ) {
         message = message +
@@ -145,13 +145,17 @@ module.exports = function( options ) {
         seneca.act( "role:'notification', create:'dashboard'", {message: message} )
       }
       if( alarm.email_alarm_on ) {
-        seneca.act( "role:'notification', send:'email'", {message: message, to: alarm.email} )
+        seneca.act( "role:'notification', send:'email'", {
+          message: message + "<br><br>Yours truly,<br>Sentinel",
+          to: alarm.email,
+          subject: 'Alarm ' + alarm.name + ' activated'
+        } )
       }
     }
 
     if( alarm.off ) {
       message =
-        "Alarm <" + alarm.name + "> for application <" + mite.name + ">" +
+        "Alarm '" + alarm.name + "' for application '" + mite.name + "'" +
           " was de-activated"
       if( alarm.type !== 'bool' ) {
         message = message +
@@ -162,7 +166,11 @@ module.exports = function( options ) {
         seneca.act( "role:'notification', create:'dashboard'", {message: message} )
       }
       if( alarm.email_alarm_off ) {
-        seneca.act( "role:'notification', send:'email'", {message: message, to: alarm.email} )
+        seneca.act( "role:'notification', send:'email'", {
+          message: message + "<br><br>Yours truly,<br>Sentinel",
+          to: alarm.email,
+          subject: 'Alarm ' + alarm.name + ' de-activated'
+        } )
       }
     }
   }

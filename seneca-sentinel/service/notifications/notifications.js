@@ -24,7 +24,7 @@ module.exports = function( options ) {
       cmd: 'send',
       html: args.message,
       to: args.to,
-      subject: 'Sentinel alarm'
+      subject: args.subject
     }, done )
   }
 
