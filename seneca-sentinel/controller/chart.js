@@ -94,16 +94,19 @@ module.exports = function( options ) {
     data.total = args.total_value
     data.data = []
 
-    var today = new Date(Date.now() - 24 * 60 * 60 * 1000)
+//    var today = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
+    var q = {
+      mite_id: args.mite_id,
+      data_type: args.data_type,
+//      date: {"$lt": today},
+      sort$: {date: -1},
+      fields$: {name: true, value: true, date: true},
+      limit$: 200
+    }
+    console.log(q)
     entities.getEntity( 'os_status_instant', seneca ).list$(
-      {
-        mite_id: args.mite_id,
-        data_type: args.data_type,
-        date: {$gt: today},
-        sort$: {date: 1},
-        fields$: {name: true, value: true, date: true}
-      }, function( err, db_data ) {
+      q, function( err, db_data ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -120,6 +123,7 @@ module.exports = function( options ) {
             myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds()
         } )
       }
+
 
       response( null, {err: false, data: data} )
     } )
