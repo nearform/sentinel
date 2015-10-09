@@ -51,7 +51,7 @@ module.exports = function( options ) {
   function listTests( msg, response ) {
     var suite_id = msg.suite_id
 
-    entities.getEntity( 'suite_test', seneca ).list$( {sort$: {end: -1}, suite_id: suite_id, limit$: 15}, function( err, tests ) {
+    entities.getEntity( 'suite_test', seneca ).list$( {sort$: {end: -1}, suite_id: suite_id, limit$: 10}, function( err, tests ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }

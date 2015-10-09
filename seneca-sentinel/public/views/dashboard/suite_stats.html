@@ -111,7 +111,7 @@
                                                             {{op.http_status}}
                                                         </div>
                                                     </div>
-
+                                                    <!--Request-->
                                                     <div class="row" ng-show="op.request.body">
                                                         <div class="col-xs-12 col-sm-12 col-lg-12">
                                                             <hr>
@@ -138,6 +138,7 @@
                                                             {{op.request.auth_token}}
                                                         </div>
                                                     </div>
+                                                    <!--Response-->
                                                     <div class="row" ng-show="op.response">
                                                         <div class="col-xs-12 col-sm-12 col-lg-12">
                                                             <hr>
@@ -156,6 +157,12 @@
                                                             <hr>
                                                         </div>
                                                     </div>
+                                                    <!--Validation-->
+                                                    <div class="row" ng-show="op.validate">
+                                                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                                                            <hr>
+                                                        </div>
+                                                    </div>
                                                     <div class="row" ng-show="op.validate">
                                                         <div class="col-xs-2 col-sm-2 col-lg-2">
                                                             <label>Parambulator validation:</label>
@@ -165,11 +172,6 @@
                                                                     src="/images/fail.png" height="20"/></div>
                                                             <div align="left" ng-show="!op.validate.err"><img
                                                                     src="/images/ok.png" height="20"/></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row" ng-show="op.validate">
-                                                        <div class="col-xs-12 col-sm-12 col-lg-12">
-                                                            <hr>
                                                         </div>
                                                     </div>
                                                     <div class="row" ng-show="op.validate">
@@ -186,6 +188,32 @@
                                                         </div>
                                                         <div class="col-xs-10 col-sm-10 col-lg-10">
                                                             {{op.validate.scheme}}
+                                                        </div>
+                                                    </div>
+                                                    <!--Variables-->
+                                                    <div class="row" ng-show="op.variables.length">
+                                                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                                                            <hr>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-show="op.variables.length">
+                                                        <div class="col-xs-2 col-sm-2 col-lg-2">
+                                                            <label>Extracted variables:</label>
+                                                        </div>
+                                                        <div class="col-xs-8 col-sm-8 col-lg-8">
+                                                            <div ng-repeat="variable in op.variables">
+                                                                <div class="row">
+                                                                    <div class="col-xs-4 col-sm-4 col-lg-4">
+                                                                        {{variable.name}}
+                                                                    </div>
+                                                                    <div class="col-xs-8 col-sm-8 col-lg-8" ng-show="variable.value">
+                                                                        {{variable.value}}
+                                                                    </div>
+                                                                    <div class="alert alert-danger" ng-show="variable.message">
+                                                                        {{variable.message}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
 

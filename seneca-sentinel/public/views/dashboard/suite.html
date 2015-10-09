@@ -186,14 +186,19 @@
                                                                 <input type="checkbox" ng-model="web.authorized">
                                                                 Require auth token (from previous login request)</label>
                                                         </div>
-                                                        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
-                                                            <label>Request data</label>
+                                                        <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                            <label>Body</label>
                                                             <textarea rows="3" class="form-control" autofocus ng-model="web.request"/>
+                                                        </div>
+                                                        <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                            <label>Extend body</label>
+                                                            <textarea rows="3" class="form-control" autofocus ng-model="web.extend"/>
                                                         </div>
                                                         <div class="alert alert-info">
                                                             Set here the request body which should be a JSON.
-                                                            <br>In case that chain requests are used the response object will be extended with this JSON to construct request body.
-                                                            <br><br>
+                                                            <br>In case that chain requests are used variable can be used with syntax {variable_name}.
+                                                            <br>Extend body can be be used to override body values.
+                                                            <br>
                                                         </div>
                                                     </div>
 
