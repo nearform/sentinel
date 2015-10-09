@@ -178,26 +178,78 @@
 
                                     <div class="col-xs-12 col-sm-12 col-lg-12" ng-show="showConfiguration">
                                         <div class="row">
-                                            <div class="form-group col-xs-3 col-sm-3 col-lg-3">
-                                                <label>
-                                                    <input type="checkbox" ng-model="web.authorized">
-                                                    Require auth token</label>
+                                            <hr>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-xs-8 col-sm-8 col-lg-8">
+                                                <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="web.chain">
+                                                        Chain requests</label>
+                                                </div>
+                                                <div class="form-group col-xs-9 col-sm-9 col-lg-9">
+                                                    <label>Use response from</label>
+                                                    <select class="form-control" ng-model="web.chain_request" ng-disabled="!web.chain">
+                                                        <option ng-repeat="chain_web in editSuite.urls" value="{{chain_web.id}}">{{chain_web.method}} - {{chain_web.url}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                </div>
+                                                <div class="form-group col-xs-9 col-sm-9 col-lg-9">
+                                                    <label>Filter response key</label>
+                                                    <input class="form-control" name="name" autofocus ng-model="web.chain_filter" ng-disabled="!web.chain">
+                                                </div>
+                                                <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                                </div>
+                                                <div class="form-group col-xs-9 col-sm-9 col-lg-9">
+                                                    <label>New request key</label>
+                                                    <input class="form-control" name="name" autofocus ng-model="web.chain_new_key" ng-disabled="!web.chain">
+                                                </div>
                                             </div>
-                                            <div class="form-group col-xs-9 col-sm-9 col-lg-9">
-                                                <label>Request data</label>
-                                                <textarea rows="3" class="form-control" autofocus ng-model="web.request"/>
+                                            <div class="alert alert-info">
+                                                Response from a previous request (or a part of that response) can be used to construct the request body for this request.
+                                                Steps to set chain requests:
+                                                <br>
+                                                <ul>
+                                                    <li>Select chain requests.</li>
+                                                    <li>Select the previous request that will be used.</li>
+                                                    <li>Edit the key from the response to get only a part of the data (leave empty to use whole response).</li>
+                                                    <li>Edit the new key to be used in the body object for filtered data (leave empty to use the filtered JSON).</li>
+                                                </ul>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group col-xs-3 col-sm-3 col-lg-3">
+                                            <div class="form-group col-xs-2 col-sm-2 col-lg-2">
+                                                <label>
+                                                    <input type="checkbox" ng-model="web.authorized">
+                                                    Require auth token (from previous login request)</label>
+                                            </div>
+                                            <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                                                <label>Request data</label>
+                                                <textarea rows="3" class="form-control" autofocus ng-model="web.request"/>
+                                            </div>
+                                            <div class="alert alert-info">
+                                                Set here the request body which should be a JSON.
+                                                <br>In case that chain requests are used the response object will be extended with this JSON to construct request body.
+                                                <br><br>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-xs-2 col-sm-2 col-lg-2">
                                                 <label>
                                                     <input type="checkbox" ng-model="web.stop_on_error">
                                                     Stop test on error</label>
                                             </div>
-                                            <div class="form-group col-xs-9 col-sm-9 col-lg-9">
-                                                <label>Validate response data (use parambulator syntax)</label>
+                                            <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+                                                <label>Validate response body</label>
                                                 <textarea rows="3" class="form-control" name="name" autofocus ng-model="web.validate_response"/>
                                             </div>
+                                            <div class="alert alert-info">
+                                                Set here the response validation schema.
+                                                <br>Please use <b><a href="https://www.npmjs.com/package/parambulator" target="_blank">Parambulator</a></b> syntax.
+                                                <br><br><br>
+                                            </div>
+
                                         </div>
                                     </div>
 

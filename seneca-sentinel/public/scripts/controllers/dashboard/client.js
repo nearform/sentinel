@@ -101,6 +101,7 @@ angular.module( 'sbAdminApp' )
         }
       }
 
+
       $scope.selectUser = function (manage_user_id){
         for (var i in $scope.users){
           if ($scope.users[i].id === manage_user_id){
@@ -109,8 +110,19 @@ angular.module( 'sbAdminApp' )
         }
       }
 
+
       $scope.saveUser = function (manage_user){
+        restFactory.post( 'auth/update_user', $scope.manage_user, function () {
+          $scope.loadUsers( function () {
+            if (!response.err){
+              $scope.users = response.data
+              $scope.manage_user = {}
+            }
+          } )
+        } )
       }
+
+
       $scope.registerUser = function (manage_user){
       }
     }
