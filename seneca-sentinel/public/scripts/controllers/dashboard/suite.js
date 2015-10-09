@@ -10,6 +10,8 @@ angular.module( 'sbAdminApp' )
       $scope.editSuite = {}
       $scope.mite = {}
       $scope.web_id = {}
+      $scope.variable_property = ""
+      $scope.variable_name = ""
 
 
       $scope.mite_id = $stateParams.mite_id
@@ -176,6 +178,45 @@ angular.module( 'sbAdminApp' )
         }
       }
 
+      $scope.deleteVariable = function(web_id, variable_id){
+        for ( var i in $scope.editSuite.urls ) {
+          if ( $scope.editSuite.urls[i].id === web_id ) {
+
+            if (!$scope.editSuite.urls[i].variables){
+              $scope.editSuite.urls[i].variables = []
+            }
+
+            for (var j in $scope.editSuite.urls[i].variables){
+              var variable = $scope.editSuite.urls[i].variables[j]
+              if (variable.id === variable_id){
+                $scope.editSuite.urls[i].variables.splice(j, 1)
+                break
+              }
+            }
+            break
+          }
+        }
+        $scope.saveSuite()
+      }
+
+      $scope.addVariable = function(web_id){
+        for ( var i in $scope.editSuite.urls ) {
+          if ( $scope.editSuite.urls[i].id === web_id ) {
+
+            if (!$scope.editSuite.urls[i].variables){
+              $scope.editSuite.urls[i].variables = []
+            }
+
+            $scope.editSuite.urls[i].variables.push({
+              id: generalServices.uuid(),
+              property: this.variable_property,
+              name: this.variable_name
+            })
+            break
+          }
+        }
+        $scope.saveSuite()
+      }
     }
   ]
   );
