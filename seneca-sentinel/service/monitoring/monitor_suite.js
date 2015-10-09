@@ -30,6 +30,7 @@ module.exports = function ( options ) {
       running:    true,
       start:      new Date(),
       operations: [],
+      variables:  {},
       validated:  true
     }
 
@@ -158,7 +159,7 @@ module.exports = function ( options ) {
 
         for ( var i in urlConfig.variables ) {
           var variable = urlConfig.variables[i]
-          variables.push(extractVariable( variable ))
+          variables.push( extractVariable( variable ) )
         }
 
         return variables
@@ -166,28 +167,29 @@ module.exports = function ( options ) {
 
         function extractVariable( variable ) {
           var variable_data = {
-            name: variable.name,
+            name:     variable.name,
             property: variable.property,
-            valid: false
+            valid:    false
           }
 
-          var tokens = variable.property.split(".")
+          var tokens = variable.property.split( "." )
           var data = response
           var value
-          for (var j in tokens){
-            if ( _.has(data, tokens[j])){
+          for ( var j in tokens ) {
+            if ( _.has( data, tokens[j] ) ) {
               value = data[tokens[j]]
               data = data[tokens[j]]
-            }else{
+            }
+            else {
               variable_data.message = "Cannot extract variable " + variable.name + ' missing ' + tokens[j] + ' key.'
-              console.log(variable_data.message)
+              console.log( variable_data.message )
               return variable_data
             }
           }
 
           variable_data.valid = true
           variable_data.value = value
-          console.log("Extracted variable", variable.name, value)
+          console.log( "Extracted variable", variable.name, value )
           return variable_data
         }
       }
@@ -200,7 +202,7 @@ module.exports = function ( options ) {
 
         operation_data.request = {}
         if ( urlConfig.request ) {
-          operation_data.request.body = urlConfig.request
+          operation_data.request.body = operation.req_body
         }
         operation_data.request.auth_token = operation.auth_token
         operation_data.response = operation.response
@@ -211,6 +213,14 @@ module.exports = function ( options ) {
         operation_data.err = operation.err
         operation_data.validate = operation.validate
         operation_data.variables = operation.variables
+
+        if ( operation_data.variables && operation_data.variables.length ) {
+          for ( var i in operation_data.variables ) {
+            if ( operation_data.variables[i].valid ) {
+              monitor_context[mite.id][suite.id].variables[operation_data.variables[i].name] = operation_data.variables[i].value
+            }
+          }
+        }
 
         monitor_context[mite.id][suite.id].operations.push( operation_data )
       }
@@ -242,6 +252,15 @@ module.exports = function ( options ) {
     }
 
 
+    function replaceVariables( body ) {
+      for ( var name in monitor_context[mite.id][suite.id].variables ) {
+        var re = new RegExp('<<' + name + '>>',"g");
+        body = body.replace( re, JSON.stringify(monitor_context[mite.id][suite.id].variables[name]) )
+      }
+      return body
+    }
+
+
     function sendRequest( mite, urlConfig, done ) {
       var method = urlConfig.method.toLowerCase()
       var url = mite.protocol + "://" + mite.host + ":" + mite.port + urlConfig.url
@@ -253,6 +272,7 @@ module.exports = function ( options ) {
         url: url
       }
       if ( req_body ) {
+        req_body = replaceVariables( req_body )
         try {
           req_body = JSON.parse( req_body )
         }
@@ -264,8 +284,27 @@ module.exports = function ( options ) {
         req.body = JSON.stringify( req_body )
       }
 
+      var ext
+      if ( urlConfig.extend ) {
+        ext = replaceVariables( urlConfig.extend )
+        try {
+          ext = JSON.parse( ext )
+        }
+        catch ( err ) {
+          ext = undefined
+        }
+
+        if (ext){
+          req_body = _.extend(req_body, ext)
+        }
+      }
+
+      req.headers = {"Content-Type": "application/json"}
+      req.body = JSON.stringify( req_body )
+
       var response_data = {
-        url: url
+        url: url,
+        req_body: req_body
       }
 
       if ( urlConfig.authorized && monitor_context[mite.id][suite.id].cookie ) {
