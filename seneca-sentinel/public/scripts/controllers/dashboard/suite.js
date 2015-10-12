@@ -84,22 +84,9 @@ angular.module( 'sbAdminApp' )
           $scope.editSuite.urls = []
         }
 
-        for ( var i in $scope.mite.process_status.web_stats ) {
-          if ( $scope.mite.process_status.web_stats[i].id === $scope.web_id ) {
-            $scope.editSuite.urls.push( angular.copy( $scope.mite.process_status.web_stats[i] ) )
-          }
-        }
-      }
-
-      $scope.addUrl = function () {
-        if ( !$scope.editSuite.urls ) {
-          $scope.editSuite.urls = []
-        }
-
-        for ( var i in $scope.mite.process_status.web_stats ) {
-          if ( $scope.mite.process_status.web_stats[i].id === $scope.web_id ) {
-            $scope.editSuite.urls.push( angular.copy( $scope.mite.process_status.web_stats[i] ) )
-            break
+        for ( var i in $scope.mite.web_api.data ) {
+          if ( $scope.mite.web_api.data[i].id === $scope.web_id ) {
+            $scope.editSuite.urls.push( angular.copy( $scope.mite.web_api.data[i] ) )
           }
         }
       }

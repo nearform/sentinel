@@ -104,7 +104,7 @@ module.exports = function( options ) {
       fields$: {name: true, value: true, date: true},
       limit$: 500
     }
-    console.log(q)
+
     entities.getEntity( 'os_status_instant', seneca ).list$(
       q, function( err, db_data ) {
       if( err ) {
