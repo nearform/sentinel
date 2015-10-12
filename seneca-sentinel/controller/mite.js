@@ -8,19 +8,43 @@ module.exports = function( options ) {
 
 
   function createMite( msg, response ) {
-    entities.getEntity( 'mite', seneca, msg ).save$( function( err, mite ) {
+    var user = msg.req$.user.user
+
+    msg.users = msg.users || []
+
+    // retrieve client users and copy to application
+    entities.getEntity("client", seneca ).load$({id: msg.client_id}, function(err, client){
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
 
-      response( null, {err: false, data: mite.data$( false )} )
-    } )
+      if( !client ) {
+        return response( null, {err: true, msg: 'Invalid client'} )
+      }
+
+      msg.users = client.users || []
+
+      entities.getEntity( 'mite', seneca, msg ).save$( function( err, mite ) {
+        if( err ) {
+          return response( null, {err: true, msg: err} )
+        }
+
+        response( null, {err: false, data: mite.data$( false )} )
+      } )
+    })
   }
 
 
   function list( msg, response ) {
+    var user = msg.req$.user.user
+
+    var q = {}
+    q.users = {$elemMatch: {id:user.id}}
+    q.sort$ = {client_id: -1}
+
     entities.getEntity( 'mite', seneca ).list$(
-      {
+      q
+//      {
 //        fields$:
 //        {
 //          name: true,
@@ -33,7 +57,8 @@ module.exports = function( options ) {
 //          status: true,
 //          suites_validated: true
 //        }
-      }, function( err, mites ) {
+//      }
+  , function( err, mites ) {
 
       if( err ) {
         return response( null, {err: true, msg: err} )
