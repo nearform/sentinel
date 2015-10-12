@@ -13,7 +13,7 @@ var path = require( 'path' )
 var fs = require( 'fs' )
 
 // create a seneca instance
-var seneca = require( 'seneca' )()
+var seneca = require( 'seneca' )({log: console})
 
 var options = seneca.options( 'config.mine.js' )
 seneca.use( 'mongo-store', options.db );
