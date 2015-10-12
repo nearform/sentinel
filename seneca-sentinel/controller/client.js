@@ -7,6 +7,11 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function createClient( msg, response ) {
+    var user = msg.req$.user.user
+
+    msg.users = msg.users || []
+    msg.users.push(user.id)
+
     entities.getEntity( 'client', seneca, msg ).save$( function( err, client ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
@@ -18,7 +23,13 @@ module.exports = function( options ) {
 
 
   function list( msg, response ) {
-    entities.getEntity( 'client', seneca ).list$({}, function( err, clients ) {
+    var user = msg.req$.user.user
+
+    var q = {}
+
+    q.users = {$in: [user.id]}
+
+    entities.getEntity( 'client', seneca ).list$(q, function( err, clients ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }

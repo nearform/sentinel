@@ -53,7 +53,7 @@ angular.module( 'sbAdminApp' )
         }
         else {
           // this is create
-          restFactory.post( 'api/client', $scope.client, function () {
+          restFactory.post( 'api/client', $scope.client, function (response) {
             $scope.loadClients( function () {
               if (!response.err){
                 $scope.client = response.data
