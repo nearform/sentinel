@@ -195,6 +195,21 @@ var app =
           }
         }
       })
+      .state('register',{
+        templateUrl:'views/pages/register.html',
+        url:'/register',
+        controller: 'LoginCtrl',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/login.js'
+              ]
+            })
+          }
+        }
+      })
       .state('login',{
         templateUrl:'views/pages/login.html',
         url:'/login',
@@ -209,7 +224,7 @@ var app =
             })
           }
         }
-    })
+      })
   }]);
 
     
