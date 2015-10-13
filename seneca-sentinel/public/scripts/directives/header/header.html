@@ -33,6 +33,25 @@
                 </li>
 
 
+                <li ng-class="{active: collapseVar==2}" class="active"><a href="" ng-click="check(2)"><i
+                        class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse in" collapse="collapseVar!=2" style="height: auto;">
+                        <li><a href="">Second Level Item</a></li>
+                        <li><a href="">Second Level Item</a></li>
+                        <li ng-init="third=!third" ng-class="{active: multiCollapseVar==3}"><a href=""
+                                                                                               ng-click="multiCheck(3)">Third
+                            Level <span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level collapse" collapse="multiCollapseVar!=3"
+                                style="height: 0px;">
+                                <li><a href="">Third Level Item</a></li>
+                                <li><a href="">Third Level Item</a></li>
+                                <li><a href="">Third Level Item</a></li>
+                                <li><a href="">Third Level Item</a></li>
+                            </ul>
+                            <!-- /.nav-third-level --> </li>
+                    </ul>
+                    <!-- /.nav-second-level --> </li>
+
             </ul>
         </div>
     </div>

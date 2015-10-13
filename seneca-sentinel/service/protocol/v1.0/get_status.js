@@ -54,6 +54,8 @@ module.exports = function( options ) {
       saveSenecaStatus( response.payload.seneca_stats)
       async.eachLimit( response.payload.os, 10, saveOSStatus, function() {
       } )
+
+      seneca.act("role:'documentation', update:'data'", {mite_id: mite.id, web_api: mite.web_api})
     }
 
     done( null, { response: response, mite: mite } )
