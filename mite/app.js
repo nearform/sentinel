@@ -62,13 +62,29 @@ seneca
     return response( null, {err: false} )
   } )
 
+seneca
+  .add( {role: 'test', cmd: 'testDataItem2'}, function( msg, response ) {
+    var id = msg.id
+    if( !id ) {
+      return response( null, {err: true, msg: 'wrong id'} )
+    }
+
+    for( var i in test_data ) {
+      if( test_data[i].id == id ) {
+        return response( null, {err: false, data: test_data[i]} )
+      }
+    }
+    return response( null, {err: false} )
+  } )
+
 seneca.act( {role: 'web', use: {
   name: 'test',
   prefix: '/api/',
   pin: {role: 'test', cmd: '*'},
   map: {
     testDataList: {GET: true, alias: 'data'},
-    testDataItem: {GET: true, alias: 'data/:id'}
+    testDataItem: {GET: true, POST: true, alias: 'data/:id'},
+    testDataItem2:{GET: true, alias: 'data/:id/something/else'}
   }
 }} )
 

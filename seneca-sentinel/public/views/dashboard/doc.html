@@ -5,4 +5,59 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> {{selected_api.url}}
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-4 col-lg-4">
+                            <label>URL</label>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-lg-4">
+                            <label>{{selected_api.url}}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br>
+                    </div>
+                    <div class="row" ng-repeat="method in selected_api.method">
+                        <div class="alert alert-info col-xs-4 col-sm-4 col-lg-4">
+                            <label>Method</label>
+                        </div>
+                        <div class="alert alert-info col-xs-8 col-sm-8 col-lg-8">
+                            <label>{{method}}</label>
+                        </div>
+
+                        <div class="col-xs-8 col-sm-8 col-lg-8" ng-show="!selected_api.monitor">
+                            <label>Curl example command.</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                            <pre style="background-color: #222222;">
+                                <code style="background-color: #222222; color: #ffffff;">
+                                    curl -i -X {{method}} {{doc_app.protocol}}://{{doc_app.host}}:{{doc_app.port}}{{selected_api.url}}
+                                </code>
+                            </pre>
+                        </div>
+
+                        <div class="col-xs-8 col-sm-8 col-lg-8" ng-show="!selected_api.monitor">
+                            <label>No more data about this service. Please use this service in a test suite to be able to gather information.</label>
+                        </div>
+                        <div class="col-xs-8 col-sm-8 col-lg-8">
+                            <br>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>

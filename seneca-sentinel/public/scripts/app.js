@@ -211,6 +211,21 @@ var app =
           }
         }
       })
+      .state('dashboard.doc_api',{
+        url:'/doc/:mite_id/api/:api_id',
+        controller: 'DocCtrl',
+        templateUrl:'views/dashboard/doc.html',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/dashboard/doc.js'
+              ]
+            })
+          }
+        }
+      })
       .state('register',{
         templateUrl:'views/pages/register.html',
         url:'/register',
