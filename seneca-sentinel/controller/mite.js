@@ -166,6 +166,7 @@ module.exports = function( options ) {
     .add( {role: name, cmd: 'stopMonitoring'}, stopMonitoring )
     .add( {role: name, cmd: 'list'}, list )
     .add( {role: name, cmd: 'load'}, load )
+    .add( {role: name, cmd: 'load_public'}, load )
     .add( {role: name, cmd: 'os_status'}, os_status )
     .add( {role: name, cmd: 'seneca_status'}, seneca_status )
 
@@ -184,6 +185,15 @@ module.exports = function( options ) {
       load:             { GET : true, alias: 'mite/:mite_id'},
       os_status:        { GET : true, alias: 'mite/:mite_id/os_status'},
       seneca_status:    { GET : true, alias: 'mite/:mite_id/seneca_status'}
+    }
+  }} )
+
+  seneca.act( {role: 'web', use: {
+    name: name,
+    prefix: '/pbl/',
+    pin: {role: name, cmd: '*'},
+    map: {
+      load_public: { GET : true, alias: 'mite/:mite_id'}
     }
   }} )
 }

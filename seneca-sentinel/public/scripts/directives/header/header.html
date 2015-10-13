@@ -1,5 +1,5 @@
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-    <div class="navbar-header">
+    <div class="navbar-header" ng-show="!is_doc">
 
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -9,8 +9,32 @@
         </button>
         <a class="navbar-brand" href="index.html">Sentinel V0.1</a>
     </div>
-    <!-- /.navbar-header -->
-    <header-notification></header-notification>
 
-    <sidebar></sidebar>
+    <div class="navbar-header" ng-show="is_doc">
+
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">{{doc_app.name}} HTTP API Documentation</a>
+    </div>
+
+    <header-notification ng-show="!is_doc"></header-notification>
+
+    <sidebar ng-show="!is_doc"></sidebar>
+
+    <div class="navbar-default sidebar" role="navigation" ng-show="is_doc">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav in" id="side-menu">
+                <li>
+                    &nbsp;
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+
 </nav>

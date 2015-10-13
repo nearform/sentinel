@@ -1,16 +1,9 @@
 'use strict';
 
-/**
- * @ngdoc directive
- * @name izzyposWebApp.directive:adminPosHeader
- * @description
- * # adminPosHeader
- */
-
 angular.module('sbAdminApp')
-  .directive('sidebar',['$location',function() {
+  .directive('sidebar_doc',['$location',function() {
     return {
-      templateUrl:'scripts/directives/sidebar/sidebar.html',
+      templateUrl:'scripts/directives/sidebar_doc/sidebar_doc.html',
       restrict: 'E',
       replace: true,
       scope: {

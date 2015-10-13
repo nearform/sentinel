@@ -37,7 +37,8 @@ var app =
                     files:[
                     'scripts/directives/header/header.js',
                     'scripts/directives/header/header-notification/header-notification.js',
-                    'scripts/directives/sidebar/sidebar.js'
+                      'scripts/directives/sidebar/sidebar.js',
+                      'scripts/directives/sidebar_doc/sidebar_doc.js'
                     ]
                 }),
                 $ocLazyLoad.load(
@@ -190,6 +191,21 @@ var app =
               name:'sbAdminApp',
               files:[
                 'scripts/controllers/dashboard/suite.js'
+              ]
+            })
+          }
+        }
+      })
+      .state('dashboard.doc',{
+        url:'/doc/:mite_id',
+        controller: 'DocCtrl',
+        templateUrl:'views/dashboard/doc.html',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/dashboard/doc.js'
               ]
             })
           }
