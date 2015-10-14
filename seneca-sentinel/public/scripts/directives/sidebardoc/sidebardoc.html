@@ -1,0 +1,21 @@
+<div class="navbar-default sidebar" role="navigation">
+    <div class="sidebar-nav navbar-collapse">
+        <ul class="nav in" id="side-menu">
+            <li>
+                &nbsp;
+            </li>
+
+            <li ng-class="{active: collapseVar==key}" ng-repeat="(key, value) in doc.data">
+                <a href="" ng-click="check(key)"><i class="fa fa-info-circle fa-fw"></i> {{key}}<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" collapse="collapseVar!=key">
+                    <li ng-repeat="(key2, value2) in value" ng-show="key2 != 'info'">
+                        <a href="/#/dashboard/doc/{{docapp.id}}/api/{{value2.info.id}}">{{key2}}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+

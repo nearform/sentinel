@@ -5,7 +5,40 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" ng-show="!selected_api">
+        <div class="col-xs-10 col-sm-10 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Here will be displayed information about HTTP API of monitored application.
+                    <br><br>
+                    Some tips for increasing the amount of information provided to you by this documentation:
+                    <ul>
+                        <li>
+                            Try to use all HTTP endpoints in at least one test suite.
+                        </li>
+                        <li>
+                            Add validation scheme and try to set correctly the test suite.
+                        </li>
+                        <li>
+                            All settings you used in a valid (a passing test suite) will be used to enhance automatically this documentation.
+                        </li>
+                        <li>
+                            From <i>Application Status/WEB</i> you can edit and add more information to each exposed service.
+                            This will be automatically added to this documentation.
+                        </li>
+                    </ul>
+
+                    <br>
+                    To start using this documentation please select required service from the left menu.
+                </div>
+
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-show="selected_api">
         <div class="col-xs-10 col-sm-10 col-lg-10">
             <div class="panel panel-default">
                 <div class="panel-heading">
