@@ -140,7 +140,9 @@ module.exports = function( options ) {
           if (!api.request.body){
             api.request.body = []
           }
-          api.request.body.push(operation_data.request.body)
+          if ( _.indexOf(api.request.body, operation_data.request.body) === -1){
+            api.request.body.push(operation_data.request.body)
+          }
         }
 
         if (operation_data.response && operation_data.response.body){

@@ -26,6 +26,13 @@ angular.module( 'sbAdminApp' )
         } )
       }
 
+      $scope.loadDoc = function ( successHandler ) {
+        restFactory.getList( 'pbl/doc/' + $scope.mite_id, function ( response ) {
+          $scope.doc = response.data
+        } )
+      }
+
+      $scope.loadDoc()
       $scope.loadApplication()
       $scope.loadOSStatus()
       $scope.loadSenecaStatus()

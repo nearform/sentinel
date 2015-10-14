@@ -31,7 +31,8 @@
                                         <td>{{status.name}}</td>
                                         <td>{{status.value}}</td>
                                         <td>{{status.um}}</td>
-                                        <td><a ng-show=" dataWithGraphs.indexOf(status.data_type) != -1 " href="#/dashboard/status/{{mite.id}}/chart/{{status.data_type}}"
+                                        <td><a ng-show=" dataWithGraphs.indexOf(status.data_type) != -1 "
+                                               href="#/dashboard/status/{{mite.id}}/chart/{{status.data_type}}"
                                                class="btn btn-info">History
                                         </a></td>
                                     </tr>
@@ -84,7 +85,7 @@
                                         <thead>
                                         <tr>
                                             <th>
-                                                <div class="col-xs-6 col-sm-6 col-lg-6">
+                                                <div class="col-xs-2 col-sm-2 col-lg-2">
                                                     URL
                                                 </div>
                                                 <div class="col-xs-4 col-sm-4 col-lg-4">
@@ -97,22 +98,36 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="web in mite.web_api.data">
+                                        <tr ng-repeat="(url, url_data) in doc.data">
                                             <td>
-                                                <div class="col-xs-6 col-sm-6 col-lg-6">
-                                                    {{web.url}}
-                                                </div>
-                                                <div class="col-xs-4 col-sm-4 col-lg-4">
-                                                    {{web.method}}
-                                                </div>
-                                                <div class="col-xs-2 col-sm-2 col-lg-2">
-                                                    <div align="left" ng-show="!web.active"><img src="/images/fail.png"
-                                                                                                 height="20"/></div>
-                                                    <div align="left" ng-show="web.active"><img src="/images/ok.png"
-                                                                                                height="20"/></div>
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <tr ng-repeat="(suburl, suburl_data) in url_data">
+                                                        <td>
+                                                            <table class="table table-striped table-bordered table-hover">
+                                                                <tr ng-repeat="(method, method_data) in suburl_data.info.method">
+                                                                    <td>
+                                                                        <div class="col-xs-6 col-sm-6 col-lg-6">
+                                                                            {{suburl_data.info.url}}
+                                                                        </div>
+                                                                        <div class="col-xs-4 col-sm-4 col-lg-4">
+                                                                            {{method}}
+                                                                        </div>
+                                                                        <div class="col-xs-2 col-sm-2 col-lg-2">
+                                                                            <div align="left" ng-show="!method_data.monitor"><img
+                                                                                    src="/images/fail.png"
+                                                                                    height="20"/></div>
+                                                                            <div align="left" ng-show="method_data.monitor"><img
+                                                                                    src="/images/ok.png"
+                                                                                    height="20"/></div>
 
-                                                </div>
+                                                                        </div>
 
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
                                         </tbody>
