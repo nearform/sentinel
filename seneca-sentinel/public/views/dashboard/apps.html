@@ -18,7 +18,7 @@
     </div>
     <div class="row" ng-show="viewMode === 'list'">
         <div class="col-xs-10 col-sm-10 col-lg-10">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     <i class="fa fa-wrench fa-fw"></i> Available applications
                 </div>
@@ -94,7 +94,7 @@
 
     <div class="row" ng-show="viewMode === 'edit'">
         <div class="col-xs-12 col-sm-12 col-lg-12">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     <i class="fa fa-wrench fa-fw"></i> Mite configuration
                 </div>
@@ -143,7 +143,7 @@
 
     <div class="row" ng-show="viewMode === 'edit' && mite.id">
         <div class="col-xs-6 col-sm-6 col-lg-6">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     <i class="fa fa-wrench fa-fw"></i> Monitor configuration
                 </div>
@@ -171,7 +171,7 @@
         </div>
 
         <div class="col-xs-6 col-sm-6 col-lg-6">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
                     <i class="fa fa-wrench fa-fw"></i> Mite monitor configuration
                 </div>
@@ -182,7 +182,7 @@
                         <input class="form-control" name="interval" ng-model="mite.configuration.rate_interval">
                     </div>
                     <div class="alert alert-success">
-                        Set here the mite time intervals for retrieving status data samples.
+                        Set here the mite time intervals for retrieving status data samples.<br><br>
                     </div>
 
                     <div class="form-group col-xs-5 col-sm-5 col-lg-5">

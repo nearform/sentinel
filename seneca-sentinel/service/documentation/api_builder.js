@@ -1,9 +1,9 @@
 "use strict"
 
 var _ = require( 'lodash' )
-var uuid = require('node-uuid')
+var uuid = require( 'node-uuid' )
 
-module.exports = function ( options ) {
+module.exports = function( options ) {
   var seneca = this;
 
   var entities = seneca.export( 'constants/entities' )
@@ -12,23 +12,22 @@ module.exports = function ( options ) {
     var mite_id = args.mite_id
     var web_api = args.web_api
 
-    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function ( err, api_doc ) {
-      if ( err ) {
+    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function( err, api_doc ) {
+      if( err ) {
         return done( err )
       }
-      if ( !api_doc ) {
+
+      if( !api_doc ) {
         api_doc = entities.getEntity( 'api_doc', seneca, {
           mite_id: mite_id
         } )
       }
 
-      if ( !api_doc.data ) {
-        api_doc.data = {}
-      }
+      api_doc.data = api_doc.data || {}
 
-      for ( var i in web_api.data ) {
+      for( var i in web_api.data ) {
         var url = web_api.data[i].url
-        if ( url.indexOf( "/" ) != 0 ) {
+        if( url.indexOf( "/" ) != 0 ) {
           continue
         }
         var url_tokens = url.split( '/' )
@@ -36,28 +35,26 @@ module.exports = function ( options ) {
         var data = api_doc.data
 
         var level = 0
-        while ( url_tokens.length > 0 ) {
-          if ( url_tokens[0].length == 0 ) {
+        while( url_tokens.length > 0 ) {
+          if( url_tokens[0].length == 0 ) {
             url_tokens.splice( 0, 1 )
             continue
           }
 
           var key = "/" + url_tokens[0]
-          if ( level >= 1 ) {
+          if( level >= 1 ) {
             key = ""
-            for (var j in url_tokens){
+            for( var j in url_tokens ) {
               key = key + "/" + url_tokens[j]
             }
             url_tokens = []
           }
 
-          if ( !data[key] ) {
-            data[key] = {
-            }
-          }
+          data[key] = data[key] || {}
+
           data = data[key]
 
-          if ( level >= 1 ) {
+          if( level >= 1 ) {
             break
           }
 
@@ -67,11 +64,8 @@ module.exports = function ( options ) {
         data.info = data.info || {
           id: uuid()
         }
-        data.info.method = data.info.method || []
-
-        if (_.indexOf(data.info.method, web_api.data[i].method ) === -1){
-          data.info.method.push( web_api.data[i].method )
-        }
+        data.info.method = data.info.method || {}
+        data.info.method[web_api.data[i].method] = data.info.method[web_api.data[i].method] || {}
 
         data.info.url = web_api.data[i].url
       }
@@ -81,6 +75,87 @@ module.exports = function ( options ) {
     } )
   }
 
+  function update_api( args, done ) {
+    var mite_id = args.mite_id
+    var urlConfig = args.urlConfig
+    var operation_data = args.operation_data
+
+    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function( err, api_doc ) {
+      if( err ) {
+        return done( err )
+      }
+      if( !api_doc ) {
+        return done()
+      }
+
+      if( !api_doc.data ) {
+        return done()
+      }
+
+      for( var i in api_doc.data ) {
+        var data = api_doc.data[i]
+
+        for( var j in data ) {
+          if( j === 'info' ) {
+            if( data[j].url === urlConfig.url ) {
+              // I found it
+              add_operation_data( data[j], operation_data, urlConfig )
+              return api_doc.save$( done )
+            }
+          }
+          else if ( data[j].info && data[j].info.url === urlConfig.url ){
+            // I found it
+            add_operation_data( data[j], operation_data, urlConfig )
+            return api_doc.save$( done )
+          }
+        }
+      }
+      done()
+    } )
+  }
+
+  function add_operation_data( data, operation_data, urlConfig ){
+    var api = data.info
+    for (var i in api.method){
+      if (i === urlConfig.method){
+        api = api.method[i]
+        api.require_authorization = urlConfig.authorized || false
+        if (!api.response){
+          api.response = {}
+        }
+        if (!api.request){
+          api.request = {}
+        }
+        if (!api.response.schema){
+          api.response.schema = []
+        }
+
+        if (urlConfig.validate_response){
+          if ( _.indexOf(api.response.schema, urlConfig.validate_response) === -1){
+            api.response.schema.push(urlConfig.validate_response)
+          }
+        }
+
+        if (operation_data.request && operation_data.request.body){
+          if (!api.request.body){
+            api.request.body = operation_data.request.body
+          }
+        }
+
+        if (operation_data.response && operation_data.response.body){
+          if (!api.response){
+            api.response.body = operation_data.response
+          }
+        }
+        api.response.expectedStatus = operation_data.statusCode
+        api.monitor = true
+        return
+      }
+    }
+  }
+
+
   seneca
     .add( {role: 'documentation', update: 'data'}, update_data )
+    .add( {role: 'documentation', update: 'api'}, update_api )
 }

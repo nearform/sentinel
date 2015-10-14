@@ -225,6 +225,10 @@ module.exports = function ( options ) {
           }
         }
 
+        if (operation_data.validated){
+          seneca.act("role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id})
+        }
+
         monitor_context[mite.id][suite.id].operations.push( operation_data )
       }
 
