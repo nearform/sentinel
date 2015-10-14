@@ -138,8 +138,9 @@ module.exports = function( options ) {
 
         if (operation_data.request && operation_data.request.body){
           if (!api.request.body){
-            api.request.body = operation_data.request.body
+            api.request.body = []
           }
+          api.request.body.push(operation_data.request.body)
         }
 
         if (operation_data.response && operation_data.response.body){

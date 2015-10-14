@@ -116,14 +116,15 @@ module.exports = function ( options ) {
           }
 
           data.validated = false
-          addOperationData( data )
-          if ( urlConfig.stop_on_error ) {
-            // stop next tests
-            return done( err )
-          }
-          else {
-            return done()
-          }
+          addOperationData( data, function(){
+            if ( urlConfig.stop_on_error ) {
+              // stop next tests
+              return done( err )
+            }
+            else {
+              return done()
+            }
+          } )
         }
 
         validateResponse( response, urlConfig.validate_response, function ( validate_result ) {
@@ -196,7 +197,7 @@ module.exports = function ( options ) {
       }
 
 
-      function addOperationData( operation ) {
+      function addOperationData( operation, done ) {
         var operation_data = {}
 
         operation_data.validated = operation.validated
@@ -225,11 +226,10 @@ module.exports = function ( options ) {
           }
         }
 
-        if (operation_data.validated){
-          seneca.act("role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id})
-        }
-
         monitor_context[mite.id][suite.id].operations.push( operation_data )
+        if (operation_data.validated){
+          seneca.act("role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id}, done)
+        }
       }
 
 
