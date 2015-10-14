@@ -111,7 +111,7 @@
                             <div class="panel-body">
                                 <div class="well"  style="background-color: #222222; color: #ffffff;">
                                     <code style="background-color: #222222; color: #ffffff;">
-                                        curl -i -X {{method}}<span ng-show="method_data.request.body">  -H "Content-Type: application/json" -d '{{method_data.request.body}}'</span><span
+                                        curl -i -X {{method}}<span ng-show="method_data.request.body.length">  -H "Content-Type: application/json" -d '{{method_data.request.body[0]}}'</span><span
                                             ng-show="method_data.require_authorization"> -b 'seneca-login={login_token}'</span>
                                         {{doc_app.protocol}}://{{doc_app.host}}:{{doc_app.port}}{{selected_api.url}}
                                     </code>
