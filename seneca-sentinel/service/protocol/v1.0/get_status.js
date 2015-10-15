@@ -62,6 +62,9 @@ module.exports = function( options ) {
 
 
     function saveSenecaStatus( status ) {
+      if (!status){
+        return
+      }
       status.mite_id = mite.id
       entities.getEntity( 'seneca_status', seneca ).load$({mite_id: mite.id}, function(err, db){
         if (err) return
@@ -108,6 +111,10 @@ module.exports = function( options ) {
   function process_web_stats( web_stats ) {
     var stats = {
       data: []
+    }
+    if (!web_stats || !web_stats.data){
+      // no data received, ignore this
+      return stats
     }
 
     stats.date = web_stats.date
