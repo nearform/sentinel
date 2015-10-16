@@ -27,7 +27,7 @@ module.exports = function( options ) {
           continue
         }
         if( alarm.data_type === args.data.data_type ) {
-          processors[alarm.type]( mite, alarm, args.data )
+          processors[alarm.type]( mite, alarm, args.data, args.status )
         }
       }
       done()

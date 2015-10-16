@@ -69,6 +69,8 @@ module.exports = function ( options ) {
             }
           }
 
+          seneca.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
+
           test.save$( function ( err ) {
             entities.getEntity( 'mite', seneca ).load$( {id: mite.id}, function ( err, mite ) {
               if ( err ) {

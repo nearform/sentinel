@@ -266,8 +266,6 @@ angular.module( 'sbAdminApp' )
           } )
         } )
       }
-
-
     }
   ]
   );

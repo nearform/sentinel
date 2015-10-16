@@ -52,7 +52,8 @@ angular.module( 'sbAdminApp' )
         {
           type_id: "2",
           type: 'bool',
-          label: 'Test Suite Failed (not implemented)'
+          data_type: 'suite_status',
+          label: 'Test Suite Failed'
         },
         {
           type_id: "3",
