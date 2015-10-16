@@ -12,6 +12,33 @@
             <button class="btn btn-sm btn-info margin-10" ng-click="change2Create()">
                 Create test suite
             </button>
+            <button class="btn btn-sm btn-info margin-10" ng-click="showImport = !showImport" ng-show="showImport">
+                Hide import
+            </button>
+            <button class="btn btn-sm btn-info margin-10" ng-click="showImport = !showImport" ng-show="!showImport">
+                Display import
+            </button>
+            <br><br>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-lg-4" ng-show="showImport">
+        </div>
+        <div class="col-xs-2 col-sm-2 col-lg-2" ng-show="showImport">
+            <select class="form-control" ng-model="import_mite_id" ng-click="select_app_import()">
+                <option ng-repeat="mite in mites" value="{{mite.id}}" class="ng-scope ng-binding">{{mite.name}}</option>
+            </select>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-lg-2" ng-show="showImport">
+            <select class="form-control" ng-model="import_suite_id">
+                <option ng-repeat="suite in import_suites" value="{{suite.id}}" class="ng-scope ng-binding">{{suite.name}}</option>
+            </select>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-lg-2 text-right" ng-show="showImport">
+            <button class="btn btn-sm btn-info margin-10" ng-click="importSuite()" ng-disabled="!import_suite_id">
+                Import selected
+            </button>
+            <button class="btn btn-sm btn-info margin-10" ng-click="importAllSuites()" ng-disabled="!import_mite_id">
+                Import All
+            </button>
             <br><br>
         </div>
     </div>
@@ -74,8 +101,8 @@
                                            class="btn btn-info"
                                                 >Status
                                         </a>
-                                        <button type="submit" class="btn btn-danger disabled"
-                                                ng-click="">
+                                        <button type="submit" class="btn btn-danger"
+                                                ng-click="deleteSuite(suite.id)">
                                             Delete
                                         </button>
                                     </td>
