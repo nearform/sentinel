@@ -248,9 +248,9 @@ module.exports = function ( options ) {
           var paramcheck = parambulator( scheme )
           paramcheck.validate( response, function ( err ) {
             if ( err ) {
-              return done( {err: true, msg: err.message || err, scheme: urlConfig.validate_response} )
+              return done( {err: true, msg: err.message || err, scheme: scheme} )
             }
-            done( {err: false, msg: 'Validated.', scheme: urlConfig.validate_response} )
+            done( {err: false, msg: 'Validated.', scheme: scheme} )
           } )
 
         }
@@ -390,5 +390,15 @@ module.exports = function ( options ) {
     }
   }
 
-  seneca.add( {role: 'suite', cmd: 'run_once'}, runOnce )
+  function replay_request( args, done ) {
+    var test_id = args.test_id
+    var suite_id = args.suite_id
+    var url = args.url
+    done()
+  }
+
+
+  seneca
+    .add( {role: 'suite', cmd: 'run_once'}, runOnce )
+    .add( {role: 'suite', replay:'request'}, replay_request)
 }

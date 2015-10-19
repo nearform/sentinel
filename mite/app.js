@@ -1,7 +1,7 @@
 "use strict";
 
 var http = require( 'http' )
-
+var uuid = require('node-uuid')
 var express = require( 'express' )
 var bodyParser = require( 'body-parser' )
 var cookieParser = require( 'cookie-parser' )
@@ -56,6 +56,7 @@ seneca
 
     for( var i in test_data ) {
       if( test_data[i].id == id ) {
+        test_data[i].value = uuid()
         return response( null, {err: false, data: test_data[i]} )
       }
     }

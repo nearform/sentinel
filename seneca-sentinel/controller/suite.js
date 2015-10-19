@@ -66,12 +66,23 @@ module.exports = function( options ) {
     } )
   }
 
+  function replayRequest( msg, response ) {
+    seneca.act("role: 'suite', replay:'request'", msg, function(err, result){
+      if (err){
+        return response(null, {err: true, msg: err})
+      }
+
+      return response(null, {err: false, data: result})
+    })
+  }
+
 
   seneca
     .add( {role: name, cmd: 'startMonitoring'}, startMonitoring )
-    .add( {role: name, cmd: 'stopMonitoring'}, stopMonitoring )
-    .add( {role: name, cmd: 'runOnceSuite'}, runOnceSuite )
-    .add( {role: name, cmd: 'listTests'}, listTests )
+    .add( {role: name, cmd: 'stopMonitoring'},  stopMonitoring  )
+    .add( {role: name, cmd: 'runOnceSuite'},    runOnceSuite    )
+    .add( {role: name, cmd: 'listTests'},       listTests       )
+    .add( {role: name, cmd: 'replayRequest'},   replayRequest   )
 
 
   seneca.act( {role: 'web', use: {
@@ -82,7 +93,8 @@ module.exports = function( options ) {
       startMonitoring:  {POST: true, alias: 'mite/:mite_id/suite/:suite_id/monitor/start'},
       stopMonitoring:   {POST: true, alias: 'mite/:mite_id/suite/:suite_id/monitor/stop'},
       runOnceSuite:     {POST: true, alias: 'mite/:mite_id/suite/:suite_id/run/once'},
-      listTests:        {GET : true, alias: 'suite/:suite_id/tests'}
+      listTests:        {GET : true, alias: 'suite/:suite_id/tests'},
+      replayRequest:    {POST: true, alias: 'suite/:suite_id/replayTest'}
     }
   }} )
 }

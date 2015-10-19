@@ -10,11 +10,13 @@ angular.module( 'sbAdminApp' )
       $scope.suite_id = $stateParams.suite_id
       $scope.test_id = $stateParams.test_id
 
+
       $scope.loadApplication = function ( successHandler ) {
         restFactory.getList( 'api/mite/' + $scope.mite_id, function ( response ) {
           $scope.mite = response.data
         } )
       }
+
 
       $scope.loadSuiteTests = function ( successHandler ) {
         restFactory.getList( 'api/suite/' + $scope.suite_id + '/tests', function ( response ) {
@@ -24,6 +26,7 @@ angular.module( 'sbAdminApp' )
           }
         } )
       }
+
 
       $scope.loadApplication()
       $scope.loadSuiteTests(function(){
@@ -36,6 +39,7 @@ angular.module( 'sbAdminApp' )
         }
       })
 
+
       $scope.runSuite = function (  ) {
         restFactory.post( 'api/mite/' + $scope.mite_id + '/suite/' + $scope.suite_id + '/run/once', {}, function () {
           $scope.loadApplication( function () {
@@ -43,6 +47,18 @@ angular.module( 'sbAdminApp' )
         } )
       }
 
+
+      $scope.replayRequest = function (  ) {
+        var body = {
+          url: this.replay_url,
+          test_id:$scope.test_id
+        }
+        restFactory.post( 'api/suite/' + $scope.suite_id + '/replayTest', body, function () {
+          $scope.loadApplication( function (response) {
+            $scope.replay_request = response.data
+          } )
+        } )
+      }
     }
   ]
   );
