@@ -11,22 +11,13 @@ module.exports = function ( options ) {
 
   var entities = seneca.export( 'constants/entities' )
   var mite_status = seneca.export( 'constants/mite_status' )
-  var monitor_context = {}
-  var monitor_ids = {}
 
   function runOnce( args, done ) {
     var suite = args.suite
     var mite = args.mite
+    var suite_context = {}
 
-    if ( monitor_context[mite.id] && monitor_context[mite.id][suite.id] && monitor_context[mite.id][suite.id].running ) {
-      return done( null, {err: true, msg: 'Suite test in progress, cannot run another test instance'} )
-    }
-
-    if ( !monitor_context[mite.id] ) {
-      monitor_context[mite.id] = {}
-    }
-
-    monitor_context[mite.id][suite.id] = {
+    suite_context = {
       running:    true,
       start:      new Date(),
       operations: [],
@@ -44,46 +35,44 @@ module.exports = function ( options ) {
         mite_id:    mite.id,
         name:       suite.name,
         suite_id:   suite.id,
-        start:      monitor_context[mite.id][suite.id].start,
+        start:      suite_context.start,
         operations: []
-      } ).save$( function ( err, test ) {
+      } ).save$( function ( err, monitor_context ) {
 
         if ( err ) {
-          monitor_context[mite.id][suite.id].running = false
           return
         }
-        console.log( 'run test suite' + suite.name )
 
         async.eachSeries( suite.urls, runTestUrl, function ( err, results ) {
-          var data = monitor_context[mite.id][suite.id]
-          var context = monitor_context[mite.id][suite.id]
-          test.operations = data.operations
-          test.end = new Date()
 
-          monitor_context[mite.id][suite.id] = {}
+          monitor_context.end = new Date()
 
-          test.validated = true
-          for ( var i in test.operations ) {
-            if ( !test.operations[i].validated ) {
-              test.validated = false
+          monitor_context.validated = true
+          for ( var i in monitor_context.operations ) {
+            if ( !monitor_context.operations[i].validated ) {
+              monitor_context.validated = false
             }
           }
 
-          seneca.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
+//          seneca.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
 
-          test.save$( function ( err ) {
+          monitor_context.save$( function ( err ) {
             entities.getEntity( 'mite', seneca ).load$( {id: mite.id}, function ( err, mite ) {
               if ( err ) {
                 return
               }
 
-              mite.last_connect_time = test.end
+              mite.last_connect_time = monitor_context.end
               mite.suites_validated = true
+
               for ( var i in mite.suites ) {
+
+                // found current suite, update its status
                 if ( mite.suites[i].id === suite.id ) {
-                  mite.suites[i].last_test_date = test.end
-                  mite.suites[i].validated = test.validated
+                  mite.suites[i].last_test_date = monitor_context.end
+                  mite.suites[i].validated = monitor_context.validated
                 }
+
                 if ( !mite.suites[i].validated ) {
                   mite.suites_validated = false
                 }
@@ -102,23 +91,24 @@ module.exports = function ( options ) {
       var begin = new Date()
       console.log( 'run ' + urlConfig.url )
 
-      sendRequest( mite, urlConfig, function ( err, data ) {
-
-        var response = data.response
-        var http_response = data.http_response
-        var url = data.url
-        data.start = begin
-        data.err = err
-        data.statusCode = http_response ? http_response.statusCode : "N/A"
-
+      prepareRequest( mite, urlConfig, function ( err, request_data ) {
         if ( err ) {
-          var http_status = "N/A"
-          if ( err.code ) {
-            http_status = err.code
-          }
+          return done( err )
+        }
 
-          data.validated = false
-          addOperationData( data, function(){
+        sendRequest( request_data, function ( err, test_context ) {
+          test_context.start = begin
+          test_context.err = err
+
+          if ( err ) {
+            var http_status = "N/A"
+            if ( err.code ) {
+              http_status = err.code
+            }
+
+            test_context.validated = false
+
+            saveStatusData( test_context )
             if ( urlConfig.stop_on_error ) {
               // stop next tests
               return done( err )
@@ -126,36 +116,50 @@ module.exports = function ( options ) {
             else {
               return done()
             }
-          } )
-        }
+          }
 
-        validateResponse( response, urlConfig.validate_response, function ( validate_result ) {
-          data.validate = validate_result
+          var response = test_context.response
+          var http_response = test_context.http_response
+          test_context.statusCode = http_response ? http_response.statusCode : "N/A"
 
-          if ( validate_result.err ) {
-            data.validated = false
+          validateResponse( response, function ( validate_result ) {
+            test_context.validate = validate_result
 
-            addOperationData( data )
-            if ( urlConfig.stop_on_error ) {
-              // stop next tests
-              return done( validate_result.err )
+            if ( validate_result.err ) {
+              test_context.validated = false
+
+              saveStatusData( test_context )
+              if ( urlConfig.stop_on_error ) {
+                // stop next tests
+                return done( validate_result.err )
+              }
+              else {
+                return done()
+              }
             }
             else {
-              return done()
+              test_context.validated = true
+
+              // extract variables
+              // save them in test context for UI and also in suite context for next requests
+              test_context.variables = extractVariables( response ) || []
+              for ( var i in test_context.variables ) {
+                if ( test_context.variables[i].valid ) {
+                  suite_context.variables[test_context.variables[i].name] = test_context.variables[i].value
+                }
+              }
+
+              saveStatusData( test_context )
+
+              done()
             }
-          }
-          else {
-            data.validated = true
-
-            data.variables = extractVariables( response )
-            addOperationData( data )
-
-            done()
-          }
+          } )
         } )
       } )
 
+
       function extractVariables( response ) {
+
         var variables = []
         if ( !urlConfig.variables ) {
           return variables
@@ -199,7 +203,7 @@ module.exports = function ( options ) {
       }
 
 
-      function addOperationData( operation, done ) {
+      function saveStatusData( operation ) {
         var operation_data = {}
 
         operation_data.validated = operation.validated
@@ -220,22 +224,15 @@ module.exports = function ( options ) {
         operation_data.process_error = operation.process_error
         operation_data.statusCode = operation.statusCode || "N/A"
 
-        if ( operation_data.variables && operation_data.variables.length ) {
-          for ( var i in operation_data.variables ) {
-            if ( operation_data.variables[i].valid ) {
-              monitor_context[mite.id][suite.id].variables[operation_data.variables[i].name] = operation_data.variables[i].value
-            }
-          }
-        }
+        suite_context.operations.push( operation_data )
 
-        monitor_context[mite.id][suite.id].operations.push( operation_data )
-        if (operation_data.validated){
-          seneca.act("role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id}, done)
+        if ( operation_data.validated ) {
+          seneca.act( "role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id} )
         }
       }
 
 
-      function validateResponse( response, validate_response, done ) {
+      function validateResponse( response, done ) {
         if ( urlConfig.validate_response ) {
 
           var scheme
@@ -245,6 +242,7 @@ module.exports = function ( options ) {
           catch ( err ) {
             return done( {err: false, msg: 'Invalid parambulator scheme.', scheme: urlConfig.validate_response} )
           }
+
           var paramcheck = parambulator( scheme )
           paramcheck.validate( response, function ( err ) {
             if ( err ) {
@@ -262,12 +260,13 @@ module.exports = function ( options ) {
 
 
     function replaceVariables( body ) {
-      for ( var name in monitor_context[mite.id][suite.id].variables ) {
-        var re = new RegExp('<<' + name + '>>',"g");
-        var value = monitor_context[mite.id][suite.id].variables[name]
-        if ( _.isObject(monitor_context[mite.id][suite.id].variables[name]) ||
-          _.isArray(monitor_context[mite.id][suite.id].variables[name])){
-          value = JSON.stringify(monitor_context[mite.id][suite.id].variables[name])
+      for ( var name in suite_context.variables ) {
+
+        var re = new RegExp( '<<' + name + '>>', "g" );
+        var value = suite_context.variables[name]
+        if ( _.isObject( value ) ||
+          _.isArray( value ) ) {
+          value = JSON.stringify( value )
         }
         body = body.replace( re, value )
       }
@@ -275,7 +274,7 @@ module.exports = function ( options ) {
     }
 
 
-    function sendRequest( mite, urlConfig, done ) {
+    function prepareRequest( mite, urlConfig, done ) {
       var method = urlConfig.method.toLowerCase()
       var url = mite.protocol + "://" + mite.host + ":" + mite.port + urlConfig.url
 
@@ -294,7 +293,7 @@ module.exports = function ( options ) {
         }
         catch ( err ) {
           return done( null, {
-            url: url,
+            url:           url,
             process_error: 'Cannot parse body as JSON, aborting... Error message: ' + err + ". Body: " + req_body
           } )
         }
@@ -311,13 +310,13 @@ module.exports = function ( options ) {
         }
         catch ( err ) {
           return done( null, {
-            url: url,
+            url:           url,
             process_error: 'Cannot parse extended body as JSON, aborting... Error message: ' + err + ". Body: " + ext
           } )
         }
 
-        if (ext){
-          req_body = _.extend(req_body, ext)
+        if ( ext ) {
+          req_body = _.extend( req_body, ext )
         }
       }
 
@@ -325,12 +324,12 @@ module.exports = function ( options ) {
       req.body = JSON.stringify( req_body )
 
       var response_data = {
-        url: url,
+        url:      url,
         req_body: req_body
       }
 
-      if ( urlConfig.authorized && monitor_context[mite.id][suite.id].cookie ) {
-        var cookie_str = 'seneca-login' + '=' + monitor_context[mite.id][suite.id].cookie
+      if ( urlConfig.authorized && suite_context.cookie ) {
+        var cookie_str = 'seneca-login' + '=' + suite_context.cookie
         response_data.auth_token = cookie_str
 
 
@@ -339,9 +338,25 @@ module.exports = function ( options ) {
         j.setCookie( cookie, url );
         req.jar = j
       }
+      return done( null, {
+        method: method,
+        req:    req
+      } )
+    }
+
+    function sendRequest( args, done ) {
+
+      var method = args.method
+      var req = args.req
 
       request[method]( req,
         function ( err, response, body ) {
+
+          var response_data = {
+            url:      req.url,
+            req_body: req.body
+          }
+
           response_data.response = body
           response_data.http_response = response
 
@@ -380,7 +395,7 @@ module.exports = function ( options ) {
             var cookie_name = cookie_str.substr( 0, index )
             var cookie_value = cookie_str.substr( index + 1 )
             if ( cookie_name === 'seneca-login' ) {
-              monitor_context[mite.id][suite.id].cookie = cookie_value.split( ';' )[0]
+              suite_context.cookie = cookie_value.split( ';' )[0]
               break
             }
 
@@ -400,5 +415,5 @@ module.exports = function ( options ) {
 
   seneca
     .add( {role: 'suite', cmd: 'run_once'}, runOnce )
-    .add( {role: 'suite', replay:'request'}, replay_request)
+    .add( {role: 'suite', replay: 'request'}, replay_request )
 }
