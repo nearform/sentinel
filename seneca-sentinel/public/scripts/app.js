@@ -151,6 +151,21 @@ var app =
             }
           }
         } )
+        .state( 'dashboard.test_details', {
+          url: '/suite/:suite_id/test/:test_id/details',
+          controller: 'SuiteStatsCtrl',
+          templateUrl: 'views/dashboard/suite_stats_details.html',
+          resolve: {
+            loadMyFiles: function( $ocLazyLoad ) {
+              return $ocLazyLoad.load( {
+                name: 'sbAdminApp',
+                files: [
+                  'scripts/controllers/dashboard/suite_stats.js'
+                ]
+              } )
+            }
+          }
+        } )
         .state( 'dashboard.chart', {
           url: '/status/:mite_id/chart/:data_type',
           controller: 'ChartCtrl',

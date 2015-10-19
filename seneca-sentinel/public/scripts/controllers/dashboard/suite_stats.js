@@ -8,6 +8,7 @@ angular.module( 'sbAdminApp' )
 
       $scope.mite_id = $stateParams.mite_id
       $scope.suite_id = $stateParams.suite_id
+      $scope.test_id = $stateParams.test_id
 
       $scope.loadApplication = function ( successHandler ) {
         restFactory.getList( 'api/mite/' + $scope.mite_id, function ( response ) {
@@ -18,11 +19,22 @@ angular.module( 'sbAdminApp' )
       $scope.loadSuiteTests = function ( successHandler ) {
         restFactory.getList( 'api/suite/' + $scope.suite_id + '/tests', function ( response ) {
           $scope.tests = response.data
+          if (successHandler){
+            successHandler()
+          }
         } )
       }
 
       $scope.loadApplication()
-      $scope.loadSuiteTests()
+      $scope.loadSuiteTests(function(){
+        if ($scope.test_id){
+          for (var i in $scope.tests){
+            if ($scope.tests[i].id === $scope.test_id){
+              $scope.test_details = $scope.tests[i]
+            }
+          }
+        }
+      })
 
       $scope.runSuite = function (  ) {
         restFactory.post( 'api/mite/' + $scope.mite_id + '/suite/' + $scope.suite_id + '/run/once', {}, function () {
