@@ -15,10 +15,11 @@ module.exports = function ( options ) {
   function runOnce( args, done ) {
     var suite = args.suite
     var mite = args.mite
-    var suite_context = {}
 
-    suite_context = {
-      running:    true,
+    var suite_context = {
+      mite_id:    mite.id,
+      name:       suite.name,
+      suite_id:   suite.id,
       start:      new Date(),
       operations: [],
       variables:  {},
@@ -28,62 +29,53 @@ module.exports = function ( options ) {
     // callback call - test will run in background
     done()
 
-    entities.getEntity(
-      'suite_test',
-      seneca,
-      {
-        mite_id:    mite.id,
-        name:       suite.name,
-        suite_id:   suite.id,
-        start:      suite_context.start,
-        operations: []
-      } ).save$( function ( err, monitor_context ) {
+    entities.getEntity( 'suite_test', seneca, suite_context ).save$( function ( err, context ) {
+      if ( err ) {
+        return
+      }
 
-        if ( err ) {
-          return
-        }
+      suite_context = context
+      async.eachSeries( suite.urls, runTestUrl, function ( err, results ) {
 
-        async.eachSeries( suite.urls, runTestUrl, function ( err, results ) {
+        suite_context.end = new Date()
 
-          monitor_context.end = new Date()
-
-          monitor_context.validated = true
-          for ( var i in monitor_context.operations ) {
-            if ( !monitor_context.operations[i].validated ) {
-              monitor_context.validated = false
-            }
+        suite_context.validated = true
+        for ( var i in suite_context.operations ) {
+          if ( !suite_context.operations[i].validated ) {
+            suite_context.validated = false
           }
+        }
 
 //          seneca.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
 
-          monitor_context.save$( function ( err ) {
-            entities.getEntity( 'mite', seneca ).load$( {id: mite.id}, function ( err, mite ) {
-              if ( err ) {
-                return
+        suite_context.save$( function ( err ) {
+          entities.getEntity( 'mite', seneca ).load$( {id: mite.id}, function ( err, mite ) {
+            if ( err ) {
+              return
+            }
+
+            mite.last_connect_time = suite_context.end
+            mite.suites_validated = true
+
+            for ( var i in mite.suites ) {
+
+              // found current suite, update its status
+              if ( mite.suites[i].id === suite.id ) {
+                mite.suites[i].last_test_date = suite_context.end
+                mite.suites[i].validated = suite_context.validated
               }
 
-              mite.last_connect_time = monitor_context.end
-              mite.suites_validated = true
-
-              for ( var i in mite.suites ) {
-
-                // found current suite, update its status
-                if ( mite.suites[i].id === suite.id ) {
-                  mite.suites[i].last_test_date = monitor_context.end
-                  mite.suites[i].validated = monitor_context.validated
-                }
-
-                if ( !mite.suites[i].validated ) {
-                  mite.suites_validated = false
-                }
+              if ( !mite.suites[i].validated ) {
+                mite.suites_validated = false
               }
+            }
 
-              mite.save$( function () {
-              } )
+            mite.save$( function () {
             } )
           } )
         } )
       } )
+    } )
 
 
     function runTestUrl( urlConfig, done ) {
