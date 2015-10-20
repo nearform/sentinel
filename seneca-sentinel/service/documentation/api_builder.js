@@ -126,12 +126,19 @@ module.exports = function( options ) {
         if (!api.request){
           api.request = {}
         }
+
         if (!api.response.schema){
           api.response.schema = []
         }
-
         if (urlConfig.validate_response){
-          if ( _.indexOf(api.response.schema, urlConfig.validate_response) === -1){
+          var found = false
+          for (var i in api.response.schema){
+            if ( _.isEqual(api.response.schema[i], urlConfig.validate_response)){
+              found = true
+              break
+            }
+          }
+          if (!found){
             api.response.schema.push(urlConfig.validate_response)
           }
         }
@@ -140,7 +147,14 @@ module.exports = function( options ) {
           if (!api.request.body){
             api.request.body = []
           }
-          if ( _.indexOf(api.request.body, operation_data.request.body) === -1){
+          var found = false
+          for (var i in api.request.body){
+            if ( _.isEqual(api.request.body[i], operation_data.request.body)){
+              found = true
+              break
+            }
+          }
+          if (!found){
             api.request.body.push(operation_data.request.body)
           }
         }

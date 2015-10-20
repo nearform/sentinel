@@ -135,7 +135,7 @@
                                 </h4>
                                 <ul>
                                     <li class="well" ng-repeat="body in method_data.request.body">
-                                        {{body}}
+                                        <pre>{{body | json}}</pre>
                                     </li>
                                 </ul>
                             </div>
@@ -160,7 +160,7 @@
                                 </h4>
                                 <ul>
                                     <li class="well" ng-repeat="schema in method_data.response.schema">
-                                        {{schema}}
+                                        <pre>{{schema | json}}</pre>
                                     </li>
                                 </ul>
                             </div>
