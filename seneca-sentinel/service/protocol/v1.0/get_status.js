@@ -51,30 +51,32 @@ module.exports = function( options ) {
 
       mite.web_api = process_web_stats( response.payload.web_stats )
 
-      saveSenecaStatus( response.payload.seneca_stats)
+      saveSenecaStatus( response.payload.seneca_stats )
       async.eachLimit( response.payload.os, 10, saveOSStatus, function() {
       } )
 
-      seneca.act("role:'documentation', update:'data'", {mite_id: mite.id, web_api: mite.web_api})
+      seneca.act( "role:'documentation', update:'data'", {mite_id: mite.id, web_api: mite.web_api} )
     }
 
     done( null, { response: response, mite: mite } )
 
 
     function saveSenecaStatus( status ) {
-      if (!status){
+      if( !status ) {
         return
       }
       status.mite_id = mite.id
-      entities.getEntity( 'seneca_status', seneca ).load$({mite_id: mite.id}, function(err, db){
-        if (err) return
-        if (!db){
-          db = entities.getEntity('seneca_status', seneca)
+      entities.getEntity( 'seneca_status', seneca ).load$( {mite_id: mite.id}, function( err, db ) {
+        if( err ) {
+          return
         }
-        db = _.extend(db, status)
+        if( !db ) {
+          db = entities.getEntity( 'seneca_status', seneca )
+        }
+        db = _.extend( db, status )
 
         db.save$()
-      })
+      } )
     }
 
 
@@ -88,7 +90,7 @@ module.exports = function( options ) {
             if( hist_data[status.data[i].data_type] ) {
               entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$()
             }
-            processAlarm(status.data[i])
+            processAlarm( status.data[i] )
           }
         }
         done()
@@ -96,7 +98,7 @@ module.exports = function( options ) {
     }
   }
 
-  function processAlarm(data){
+  function processAlarm( data ) {
     if( 'application_restarted' === data.data_type ) {
       seneca.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
       return
@@ -112,12 +114,12 @@ module.exports = function( options ) {
     var stats = {
       data: []
     }
-    if (!web_stats || !web_stats.data){
+    if( !web_stats ) {
       // no data received, ignore this
       return stats
     }
 
-    stats.date = web_stats.date
+    stats.date = web_stats
     delete web_stats.date
 
     for( var key in web_stats ) {
