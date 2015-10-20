@@ -30,7 +30,7 @@ module.exports = function ( options ) {
         q = {
           sort$: {date: -1},
           limit$: 10,
-          mite_id: {$in: access_list}
+          "mite.id": {$in: access_list}
         }
 
         entities.getEntity( 'notification', seneca ).list$(
