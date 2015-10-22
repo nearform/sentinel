@@ -27,7 +27,8 @@
     "async": "^1.4.2",
     "lodash": "^3.10.1",
     "macaddress": "^0.2.8",
-    "node-uuid": "^1.4.3"
+    "node-uuid": "^1.4.3",
+    "seneca-crypt": "0.0.1"
   },
   "repository": {
     "type": "git",

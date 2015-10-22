@@ -24,6 +24,8 @@ seneca.use( 'auth', options.auth )
 
 seneca.use( 'seneca-mail', options.mail )
 
+seneca.use( 'seneca-crypt', {password: 'e2klsdf56fd'} )
+
 var app = express()
 app.enable( 'trust proxy' )
 

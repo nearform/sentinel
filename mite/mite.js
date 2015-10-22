@@ -107,6 +107,7 @@ module.exports = function( options ) {
     loadModules( respond )
   }
 
+  seneca.use( 'seneca-crypt', {password: 'e2klsdf56fd'} )
   seneca.add( 'init:mite', init )
 }
 

@@ -24,7 +24,7 @@ module.exports = function ( options ) {
 
     var body = JSON.stringify( {command: command} )
 
-    seneca.act("role: 'utility', encrypt: 'message'", {message: body, key: mite.key}, function(err, encrypt){
+    seneca.act("role: 'crypt', encrypt: 'message'", {message: body, password: mite.key}, function(err, encrypt){
       request.post( {
           url:     url,
           headers: {
@@ -50,7 +50,7 @@ module.exports = function ( options ) {
             return done( null, {err: true, msg: body} )
           }
 
-          seneca.act("role: 'utility', decrypt: 'message'", {message: resp.response, key: mite.key}, function(err, decrypt){
+          seneca.act("role: 'crypt', decrypt: 'message'", {message: resp.response, password: mite.key}, function(err, decrypt){
             resp = decrypt.message
 
             try {

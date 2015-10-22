@@ -7,7 +7,7 @@ module.exports = function( options ) {
 
   function command( args, response ) {
     var command = args.command
-    seneca.act( "role: 'mite_utility', decrypt: 'message'", {message: command}, function(err, decrypt){
+    seneca.act( "role: 'crypt', decrypt: 'message'", {message: command}, function(err, decrypt){
 
       var message
       try {
@@ -24,7 +24,7 @@ module.exports = function( options ) {
           if (err){
             return response(err)
           }
-          seneca.act( "role: 'mite_utility', encrypt: 'message'", {message: JSON.stringify(data)}, function(err, encrypt){
+          seneca.act( "role: 'crypt', encrypt: 'message'", {message: JSON.stringify(data)}, function(err, encrypt){
             response(err, {response: encrypt.message})
           })
         }

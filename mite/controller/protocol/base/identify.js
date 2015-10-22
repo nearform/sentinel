@@ -6,7 +6,7 @@ module.exports = function( options ) {
   var protocol_version = seneca.export( 'constants/protocol_version' )
 
   function identify( args, response ) {
-    seneca.act( "role: 'mite_utility', decrypt: 'message'", {message: args.command}, function(err, decrypt){
+    seneca.act( "role: 'crypt', decrypt: 'message'", {message: args.command}, function(err, decrypt){
       var message
       try {
         message = JSON.parse( decrypt.message )
@@ -22,7 +22,7 @@ module.exports = function( options ) {
           if (err){
             return response(err)
           }
-          seneca.act( "role: 'mite_utility', encrypt: 'message'", {message: JSON.stringify(data)}, function(err, encrypt){
+          seneca.act( "role: 'crypt', encrypt: 'message'", {message: JSON.stringify(data)}, function(err, encrypt){
             response(err, {response: encrypt.message})
           })
         }
