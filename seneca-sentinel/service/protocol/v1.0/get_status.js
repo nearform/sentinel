@@ -119,7 +119,7 @@ module.exports = function( options ) {
       return stats
     }
 
-    stats.date = web_stats
+//    stats.date = web_stats
     delete web_stats.date
 
     for( var key in web_stats ) {

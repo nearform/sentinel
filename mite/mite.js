@@ -8,7 +8,7 @@ module.exports = function( options ) {
   var seneca = this;
 
   function loadModules( done ) {
-    processInjectedFolders( ['constants', 'controller', 'protocol', 'monitor', 'status'], done )
+    processInjectedFolders( ['constants', 'controller', 'protocol', 'service'], done )
   }
 
   function processInjectedFolders( folders, done ) {
@@ -56,7 +56,7 @@ module.exports = function( options ) {
         async.eachSeries( files, function( file, callback ) {
           console.log( '##############################################################################' )
           console.log( 'Injecting file: %s', file )
-          seneca.use( file );
+          seneca.use( file, options );
           callback()
         }, function( err ) {
           if( err ) {

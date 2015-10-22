@@ -7,12 +7,30 @@ module.exports = function( options ) {
 
   function command( args, response ) {
     var command = args.command
-    seneca.act( "role:'protocol_v1',generate:'response'",
-      {
-        command: command
-      },
-      response
-    )
+    seneca.act( "role: 'mite_utility', decrypt: 'message'", {message: command}, function(err, decrypt){
+
+      var message
+      try {
+        message = JSON.parse( decrypt.message )
+      } catch ( err ) {
+        return response( null, {err: true, msg: 'Received unexpected response: ' + decrypt.message} )
+      }
+
+      seneca.act( "role:'protocol_v1',generate:'response'",
+        {
+          command: message.command
+        },
+        function(err, data){
+          if (err){
+            return response(err)
+          }
+          seneca.act( "role: 'mite_utility', encrypt: 'message'", {message: JSON.stringify(data)}, function(err, encrypt){
+            response(err, {response: encrypt.message})
+          })
+        }
+
+      )
+    } )
   }
 
   seneca

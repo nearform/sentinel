@@ -97,9 +97,11 @@ module.exports = function( options ) {
         return done( err )
       }
 
+      var found = false
       for( var i in mite.suites ) {
         if( suite_id === mite.suites[i].id ) {
 
+          found = true
           var suite = mite.suites[i]
 
           suite.monitoring = monitor_status
@@ -120,6 +122,10 @@ module.exports = function( options ) {
           } )
         }
       }
+      if( !found ) {
+        return done()
+      }
+
     } )
   }
 
@@ -210,6 +216,7 @@ module.exports = function( options ) {
             }
 
             mite.save$( function( err, mite ) {
+              console.log('Identified', mite.name)
             } )
           } )
       }
@@ -227,15 +234,16 @@ module.exports = function( options ) {
               if( response.err ) {
                 mite.status = mite_status.NOT_CONNECTED
               }
-              else {
-                mite = _.extend( mite, response.mite )
-              }
+//              else {
+//                mite = _.extend( mite, response.mite )
+//              }
             }
             else {
               mite.status = mite_status.NOT_CONNECTED
             }
 
             mite.save$( function() {
+              console.log('Monitoring', mite.name)
             } )
 
           } )
@@ -243,13 +251,14 @@ module.exports = function( options ) {
       else {
         mite.status = mite_status.NOT_CONNECTED
         mite.save$( function() {
+          console.log('Not connected', mite.name)
         } )
       }
 
     } )
   }
 
-  function init(args, done){
+  function init( args, done ) {
     start_monitor()
     done()
   }
@@ -263,5 +272,6 @@ module.exports = function( options ) {
     .add( 'init:monitor', init )
 
   // @hack
-  init({}, function(){})
+  init( {}, function() {
+  } )
 }

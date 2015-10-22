@@ -14,7 +14,7 @@ seneca.use( 'user' )
 
 seneca.use( 'auth', {restrict: '/api'} )
 seneca.use( 'local-auth' )
-seneca.use( 'mite' )
+seneca.use( 'mite', {key: '1233212##$#2131'} )
 
 var app = express()
 app.enable( 'trust proxy' )
