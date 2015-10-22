@@ -79,6 +79,7 @@ angular.module( 'sbAdminApp' )
           if ( $scope.client.users[i].id === user_id ) {
             $scope.client.users.splice( i, 1 )
             $scope.saveClient()
+            return
           }
         }
       }

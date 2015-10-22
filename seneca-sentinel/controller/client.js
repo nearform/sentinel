@@ -10,12 +10,23 @@ module.exports = function( options ) {
     var user = msg.req$.user.user
 
     msg.users = msg.users || []
-    msg.users.push({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      id: user.id
-    })
+
+    var found = false
+    for( var i in msg.users ) {
+      if( msg.users[i].id === user.id ) {
+        found = true
+        break
+      }
+    }
+
+    if( !found ) {
+      msg.users.push( {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        id: user.id
+      } )
+    }
 
     entities.getEntity( 'client', seneca, msg ).save$( function( err, client ) {
       if( err ) {
@@ -32,9 +43,9 @@ module.exports = function( options ) {
 
     var q = {}
 
-    q.users = {$elemMatch: {id:user.id}}
+    q.users = {$elemMatch: {id: user.id}}
 
-    entities.getEntity( 'client', seneca ).list$(q, function( err, clients ) {
+    entities.getEntity( 'client', seneca ).list$( q, function( err, clients ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -75,37 +86,37 @@ module.exports = function( options ) {
         return response( null, {err: true, msg: err} )
       }
 
-      if (!client){
+      if( !client ) {
         return response( null, {err: true, msg: 'Invalid client'} )
       }
 
-      entities.User(seneca ).load$({email: invite_email}, function(err, user){
+      entities.User( seneca ).load$( {email: invite_email}, function( err, user ) {
         if( err ) {
           return response( null, {err: true, msg: err} )
         }
 
-        if (!user){
+        if( !user ) {
           return response( null, {err: true, msg: 'Invalid user email'} )
         }
 
-        if ( !client.users ){
+        if( !client.users ) {
           client.users = []
         }
 
-        for (var i in client.users){
-          if (client.users[i].email === invite_email){
+        for( var i in client.users ) {
+          if( client.users[i].email === invite_email ) {
             return response( null, {err: true, msg: 'User already invited'} )
           }
         }
 
-        client.users.push({
+        client.users.push( {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
           id: user.id
-        })
+        } )
 
-        client.save$(function(err, client){
+        client.save$( function( err, client ) {
           if( err ) {
             return response( null, {err: true, msg: err} )
           }
@@ -113,8 +124,8 @@ module.exports = function( options ) {
           client = client ? client.data$( false ) : client
 
           response( null, {err: false, data: client} )
-        })
-      })
+        } )
+      } )
     } )
   }
 
@@ -132,11 +143,11 @@ module.exports = function( options ) {
     prefix: '/api/',
     pin: {role: name, cmd: '*'},
     map: {
-      createClient:     { POST: true, alias: 'client'},
-      updateClient:     { PUT : true, alias: 'client'},
-      list:             { GET : true, alias: 'client'},
-      load:             { GET : true, alias: 'client/:client_id'},
-      invite:           { PUT : true, alias: 'client/:client_id/invite'}
+      createClient: { POST: true, alias: 'client'},
+      updateClient: { PUT: true, alias: 'client'},
+      list: { GET: true, alias: 'client'},
+      load: { GET: true, alias: 'client/:client_id'},
+      invite: { PUT: true, alias: 'client/:client_id/invite'}
     }
   }} )
 }
