@@ -86,7 +86,7 @@ module.exports = function( options ) {
         if( status.data ) {
           for( var i in status.data ) {
             status.data[i].mite_id = mite.id
-            status.data[i].date = new Date( status.timestamp )
+            status.data[i].date = new Date( status.date )
             if( hist_data[status.data[i].data_type] ) {
               entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$()
             }
