@@ -83,15 +83,15 @@
                                 Require authentication (a previous login service call and use of cookies).<br>
                             </div>
                             <div class="panel-body" ng-show="!method_data.require_authorization">
-                                Do not require authentication.<br>
+                                Do not require authentication.<br><br>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xs-4 col-sm-4 col-lg-4" ng-show="!method_data.monitor">
-                        <div class="panel panel-default">
+                        <div class="panel panel-danger">
                             <div class="panel-heading">
-                                Tip
+                                Warning - this service was not used
                             </div>
 
                             <div class="panel-body">
@@ -112,13 +112,13 @@
                                 <div class="well"  style="background-color: #222222; color: #ffffff;">
                                     <code style="background-color: #222222; color: #ffffff;">
                                         curl -i -X {{method}}<span ng-show="method_data.request.body.length">  -H "Content-Type: application/json" -d '{{method_data.request.body[0]}}'</span><span
-                                            ng-show="method_data.require_authorization"> -b 'seneca-login={login_token}'</span>
+                                            ng-show="method_data.require_authorization"> -b 'seneca-login=&lt;&lt;login_token&gt;&gt;'</span>
                                         {{doc_app.protocol}}://{{doc_app.host}}:{{doc_app.port}}{{selected_api.url}}
                                     </code>
                                 </div>
                             </div>
                             <div class="panel-footer">
-                                Variable of the form {var_name} should be replaced accordingly</p>
+                                Variable of the form &lt;&lt;var_name&gt;&gt; should be replaced accordingly.</p>
                             </div>
                         </div>
                     </div>

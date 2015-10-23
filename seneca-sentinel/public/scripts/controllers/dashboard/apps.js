@@ -62,6 +62,15 @@ angular.module( 'sbAdminApp' )
         }
       }
 
+      $scope.deleteMite = function (mite_id) {
+        restFactory.delete( 'api/mite', mite_id, function () {
+          generalServices.loadApplications( function () {
+            $scope.viewMode = 'list'
+            $scope.mite = {}
+          } )
+        } )
+      }
+
       $scope.editMite = function ( mite ) {
         $scope.mite = angular.copy( mite )
         $scope.viewMode = 'edit'

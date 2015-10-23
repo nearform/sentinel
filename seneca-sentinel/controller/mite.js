@@ -157,8 +157,38 @@ module.exports = function( options ) {
     } )
   }
 
+  function deleteMite( msg, response ) {
+    var mite_id = msg.id
+    if (!mite_id){
+      return response(null, {err: true, msg: 'No valid application.'})
+    }
+
+    entities.getEntity('mite', seneca ).delete$({id: mite_id}, function(err){
+      if (err){
+        return response(null, {err: true, msg: 'Some error occured'})
+      }
+
+      // this should be changed
+      // now ignore errors, try to delete as much as possible
+      entities.getEntity('api_doc', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+        entities.getEntity('notification', seneca ).delete$({"mite.id": mite_id, all$: true}, function(){
+          entities.getEntity('os_status', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+            entities.getEntity('os_status_instant', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+              entities.getEntity('seneca_status', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+                entities.getEntity('suite_test', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+                  response(null, {err: false})
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  }
+
 
   seneca
+    .add( {role: name, cmd: 'deleteMite'}, deleteMite )
     .add( {role: name, cmd: 'createMite'}, createMite )
     .add( {role: name, cmd: 'updateMite'}, createMite )
     .add( {role: name, cmd: 'forceConnect'}, forceConnect )
@@ -176,6 +206,7 @@ module.exports = function( options ) {
     prefix: '/api/',
     pin: {role: name, cmd: '*'},
     map: {
+      deleteMite:       { DELETE: true,alias: 'mite/:id'},
       createMite:       { POST: true, alias: 'mite'},
       updateMite:       { PUT : true, alias: 'mite'},
       forceConnect:     { POST: true, alias: 'mite/:mite_id/forceConnect'},
