@@ -1,0 +1,39 @@
+{
+  "name"    : "sm_monitor",
+  "states": {
+    "NOT_CONNECTED" : {
+      "initState" : true,
+      "commands"  : {
+        "execute" : {
+          "pattern": "role:'mite',send:'identify'",
+          "next"  :  {
+            "error"   : "NOT_CONNECTED",
+            "success" : "IDENTIFIED"
+          }
+        }
+      }
+    },
+    "IDENTIFIED"    : {
+      "commands"    : {
+        "execute"   : {
+          "pattern" : "role:'mite',send:'configuration'",
+          "next"  :  {
+            "error"   : "NOT_CONNECTED",
+            "success" : "MONITORING"
+          }
+        }
+      }
+    },
+    "MONITORING"    : {
+      "commands"    : {
+        "execute"   : {
+          "pattern" : "role:'mite',send:'getStatus'",
+          "next"    :  {
+            "error"   :   "NOT_CONNECTED",
+            "success" : "MONITORING"
+          }
+        }
+      }
+    }
+  }
+}

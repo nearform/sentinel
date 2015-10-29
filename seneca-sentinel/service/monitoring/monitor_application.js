@@ -166,95 +166,14 @@ module.exports = function( options ) {
         return
       }
 
-      if( mite_status.NOT_CONNECTED === mite.status ) {
-        console.log( 'Monitor', mite.name, 'identify' )
-        seneca.act( "role:'mite',send:'identify'", {mite: mite}, function( err, response ) {
-
-          if( response ) {
-            if( response.err ) {
-              seneca.act( "role: 'notification', notify: 'not_connect'", {mite: mite}, function() {
-              } )
-              mite.status = mite_status.NOT_CONNECTED
-            }
-            else {
-              mite = _.extend( mite, response.mite )
-              mite.status = mite_status.IDENTIFIED
-              monitor_data[mite.id].communication_context = response.communication_context
-            }
-          }
-          else {
-            mite.status = mite_status.NOT_CONNECTED
-          }
+      seneca.act( "role:'sm_monitor',cmd:'execute'", {mite: mite}, function( err, response ) {
+        seneca.act( "role: 'sm_monitor', get: 'context'", function( err, context ) {
+          mite.status = context.state
 
           mite.save$( function( err, mite ) {
-            if( mite_status.NOT_CONNECTED != mite.status ) {
-              monitorMite( id )
-            }
           } )
         } )
-      }
-      else if( mite_status.IDENTIFIED === mite.status ) {
-        console.log( 'Monitor', mite.name, 'configuration' )
-        seneca.act(
-          "role:'mite',send:'configuration'",
-          {
-            mite: mite,
-            communication_context: monitor_data[mite.id].communication_context || {}
-          }, function( err, response ) {
-
-            if( response ) {
-              if( response.err ) {
-                mite.status = mite_status.NOT_CONNECTED
-              }
-              else {
-                mite = _.extend( mite, response.mite )
-                mite.status = mite_status.MONITORING
-              }
-            }
-            else {
-              mite.status = mite_status.NOT_CONNECTED
-            }
-
-            mite.save$( function( err, mite ) {
-              console.log('Identified', mite.name)
-            } )
-          } )
-      }
-      else if( mite_status.MONITORING === mite.status ) {
-        console.log( 'Monitor', mite.name, 'getStatus' )
-        seneca.act(
-          "role:'mite',send:'getStatus'",
-          {
-            mite: mite,
-            communication_context: monitor_data[mite.id].communication_context || {}
-          },
-          function( err, response ) {
-
-            if( response ) {
-              if( response.err ) {
-                mite.status = mite_status.NOT_CONNECTED
-              }
-//              else {
-//                mite = _.extend( mite, response.mite )
-//              }
-            }
-            else {
-              mite.status = mite_status.NOT_CONNECTED
-            }
-
-            mite.save$( function() {
-              console.log('Monitoring', mite.name)
-            } )
-
-          } )
-      }
-      else {
-        mite.status = mite_status.NOT_CONNECTED
-        mite.save$( function() {
-          console.log('Not connected', mite.name)
-        } )
-      }
-
+      } )
     } )
   }
 
@@ -275,3 +194,99 @@ module.exports = function( options ) {
   init( {}, function() {
   } )
 }
+
+
+
+
+
+/*
+ if( mite_status.NOT_CONNECTED === mite.status ) {
+ console.log( 'Monitor', mite.name, 'identify' )
+ seneca.act( "role:'mite',send:'identify'", {mite: mite}, function( err, response ) {
+
+ if( response ) {
+ if( response.err ) {
+ seneca.act( "role: 'notification', notify: 'not_connect'", {mite: mite}, function() {
+ } )
+ mite.status = mite_status.NOT_CONNECTED
+ }
+ else {
+ mite = _.extend( mite, response.mite )
+ mite.status = mite_status.IDENTIFIED
+ monitor_data[mite.id].communication_context = response.communication_context
+ }
+ }
+ else {
+ mite.status = mite_status.NOT_CONNECTED
+ }
+
+ mite.save$( function( err, mite ) {
+ if( mite_status.NOT_CONNECTED != mite.status ) {
+ monitorMite( id )
+ }
+ } )
+ } )
+ }
+ else if( mite_status.IDENTIFIED === mite.status ) {
+ console.log( 'Monitor', mite.name, 'configuration' )
+ seneca.act(
+ "role:'mite',send:'configuration'",
+ {
+ mite: mite,
+ communication_context: monitor_data[mite.id].communication_context || {}
+ }, function( err, response ) {
+
+ if( response ) {
+ if( response.err ) {
+ mite.status = mite_status.NOT_CONNECTED
+ }
+ else {
+ mite = _.extend( mite, response.mite )
+ mite.status = mite_status.MONITORING
+ }
+ }
+ else {
+ mite.status = mite_status.NOT_CONNECTED
+ }
+
+ mite.save$( function( err, mite ) {
+ console.log('Identified', mite.name)
+ } )
+ } )
+ }
+ else if( mite_status.MONITORING === mite.status ) {
+ console.log( 'Monitor', mite.name, 'getStatus' )
+ seneca.act(
+ "role:'mite',send:'getStatus'",
+ {
+ mite: mite,
+ communication_context: monitor_data[mite.id].communication_context || {}
+ },
+ function( err, response ) {
+
+ if( response ) {
+ if( response.err ) {
+ mite.status = mite_status.NOT_CONNECTED
+ }
+ //              else {
+ //                mite = _.extend( mite, response.mite )
+ //              }
+ }
+ else {
+ mite.status = mite_status.NOT_CONNECTED
+ }
+
+ mite.save$( function() {
+ console.log('Monitoring', mite.name)
+ } )
+
+ } )
+ }
+ else {
+ mite.status = mite_status.NOT_CONNECTED
+ mite.save$( function() {
+ console.log('Not connected', mite.name)
+ } )
+ }
+
+ */

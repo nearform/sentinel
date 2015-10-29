@@ -15,6 +15,8 @@ var fs = require( 'fs' )
 // create a seneca instance
 var seneca = require( 'seneca' )({log: console})
 
+var sm_config = require('./config.sm.json')
+
 var options = seneca.options( 'config.mine.js' )
 seneca.use( 'mongo-store', options.db );
 
@@ -25,6 +27,10 @@ seneca.use( 'auth', options.auth )
 seneca.use( 'seneca-mail', options.mail )
 
 seneca.use( 'seneca-crypt', {password: 'e2klsdf56fd'} )
+
+seneca.use( 'seneca-sm' )
+
+seneca.act( "role: 'sm', create: 'instance'", sm_config, function(){} )
 
 var app = express()
 app.enable( 'trust proxy' )
