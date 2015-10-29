@@ -10,7 +10,7 @@ module.exports = function( options ) {
 
   function configuration( args, done ) {
     var mite = args.mite
-    var communication_context = args.communication_context
+    var communication_context = args.communication_context || {}
 
     done( null, {
       authorization: {

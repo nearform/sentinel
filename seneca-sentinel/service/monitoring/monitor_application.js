@@ -146,28 +146,31 @@ module.exports = function( options ) {
 
   function startMonitorMite( mite ) {
     if( mite.monitoring ) {
-      var interval = (mite.monitor ? ( mite.monitor.interval || 10 ) : 10) * 1000
-      monitor_data[mite.id] = {
-        started: true,
-        monitor_id: setInterval( function() {
-          var id = mite.id
-          monitorMite( id )
-        }, interval ),
-        mite_id: mite.id
-      }
+      var sm_config = require('../../config.sm.json')
+      sm_config.name = "sm_" + mite.name
+      seneca.act( "role: 'sm', create: 'instance'", sm_config, function(){
+        var interval = (mite.monitor ? ( mite.monitor.interval || 10 ) : 10) * 1000
+        monitor_data[mite.id] = {
+          started: true,
+          monitor_id: setInterval( function() {
+            var id = mite.id
+            monitorMite( id )
+          }, interval ),
+          mite_id: mite.id
+        }
+      } )
     }
   }
 
 
-  // here I must implement a status machine and refactoring - TBD
   function monitorMite( id ) {
     entities.getEntity( 'mite', seneca ).load$( {id: id}, function( err, mite ) {
       if( err ) {
         return
       }
 
-      seneca.act( "role:'sm_monitor',cmd:'execute'", {mite: mite}, function( err, response ) {
-        seneca.act( "role: 'sm_monitor', get: 'context'", function( err, context ) {
+      seneca.act( "role:'sm_" + mite.name + "',cmd:'execute'", {mite: mite}, function( err, response ) {
+        seneca.act( "role: 'sm_" + mite.name + "', get: 'context'", function( err, context ) {
           mite.status = context.state
 
           mite.save$( function( err, mite ) {

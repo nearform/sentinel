@@ -8,7 +8,16 @@
           "pattern": "role:'mite',send:'identify'",
           "next"  :  {
             "error"   : "NOT_CONNECTED",
-            "success" : "IDENTIFIED"
+            "success" : [
+              {
+                "schema": {"err": true},
+                "state": "NOT_CONNECTED"
+              },
+              {
+                "schema": {"err": false},
+                "state": "IDENTIFIED"
+              }
+            ]
           }
         }
       }
