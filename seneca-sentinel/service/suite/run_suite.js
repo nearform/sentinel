@@ -161,6 +161,7 @@ module.exports = function( options ) {
           // extract variables
           // save them in test context for UI and also in suite context for next requests
           test_context.variables = extractVariables( response ) || []
+          console.log(test_context.variables)
           for( var i in test_context.variables ) {
             if( test_context.variables[i].valid ) {
               suite_context.variables[test_context.variables[i].name] = test_context.variables[i].value
@@ -184,7 +185,25 @@ module.exports = function( options ) {
 
       for( var i in urlConfig.variables ) {
         var variable = urlConfig.variables[i]
-        variables.push( extractVariable( variable ) )
+        if ('<<random_number>>' === variable.property){
+          variables.push({
+            name: variable.name,
+            property: variable.property,
+            valid: true,
+            value: genNumber()
+          })
+        }
+        else if ('<<random_string>>' === variable.property){
+          variables.push({
+            name: variable.name,
+            property: variable.property,
+            valid: true,
+            value: genString()
+          })
+        }
+        else{
+          variables.push( extractVariable( variable ) )
+        }
       }
 
       return variables
@@ -253,9 +272,10 @@ module.exports = function( options ) {
     function validateResponse( response, done ) {
       if( urlConfig.validate_response ) {
 
-        var scheme
+        var scheme = replaceVariables( suite_context, urlConfig.validate_response )
+
         try {
-          scheme = JSON.parse( urlConfig.validate_response )
+          scheme = JSON.parse( scheme )
         }
         catch( err ) {
           return done( {err: false, msg: 'Invalid parambulator scheme.', scheme: urlConfig.validate_response} )
@@ -322,7 +342,7 @@ module.exports = function( options ) {
 
     var ext
     if( urlConfig.extend ) {
-      ext = replaceVariables( urlConfig.extend )
+      ext = replaceVariables( suite_context, urlConfig.extend )
       try {
         ext = JSON.parse( ext )
       }
@@ -481,6 +501,23 @@ module.exports = function( options ) {
         done("Test url not found")
       }
     })
+  }
+
+  function genNumber(){
+    var high = 100000
+    var low = 0
+    return Math.floor(Math.random() * (high - low) + low)
+  }
+
+  function genString(){
+    var len = 8
+    var dict = "abcdefghjkmnpqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ";
+
+    var str = "";
+    for (var i = 0; i < len; i++) {
+      str += dict.charAt(Math.floor(Math.random() * dict.length))
+    }
+    return str
   }
 
 
