@@ -10,11 +10,11 @@
             "error"   : "NOT_CONNECTED",
             "success" : [
               {
-                "schema": {"err": true},
-                "state": "NOT_CONNECTED"
-              },
-              {
-                "schema": {"err": false},
+                "schema": {
+                  "response": {
+                    "err": {"eq$":false}
+                  }
+                },
                 "state": "IDENTIFIED"
               }
             ]
@@ -28,7 +28,16 @@
           "pattern" : "role:'mite',send:'configuration'",
           "next"  :  {
             "error"   : "NOT_CONNECTED",
-            "success" : "MONITORING"
+            "success" : [
+              {
+                "schema": {
+                  "response": {
+                    "err": {"eq$":false}
+                  }
+                },
+                "state": "MONITORING"
+              }
+            ]
           }
         }
       }
@@ -39,7 +48,16 @@
           "pattern" : "role:'mite',send:'getStatus'",
           "next"    :  {
             "error"   :   "NOT_CONNECTED",
-            "success" : "MONITORING"
+            "success" : [
+              {
+                "schema": {
+                  "response": {
+                    "err": {"eq$":false}
+                  }
+                },
+                "state": "MONITORING"
+              }
+            ]
           }
         }
       }

@@ -169,7 +169,14 @@ module.exports = function( options ) {
         return
       }
 
-      seneca.act( "role:'sm_" + mite.name + "',cmd:'execute'", {mite: mite}, function( err, response ) {
+      seneca.act(
+        "role:'sm_" + mite.name + "',cmd:'execute'",
+        {
+          mite: mite,
+          communication_context: monitor_data[mite.id].communication_context || {}
+        },
+        function( err, response ) {
+        monitor_data[mite.id].communication_context = response.communication_context || {}
         seneca.act( "role: 'sm_" + mite.name + "', get: 'context'", function( err, context ) {
           mite.status = context.state
 
