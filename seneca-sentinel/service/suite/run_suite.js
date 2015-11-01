@@ -404,7 +404,7 @@ module.exports = function( options ) {
         test_context.method = method
 
         if( err ) {
-          return done( err, response_data )
+          return done( err, test_context )
         }
 
         try {
