@@ -8,7 +8,7 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function createDashboardNotification( args, done ) {
-    console.log('Create dashboard notification', args.message)
+    seneca.log.debug('Create dashboard notification', args.message)
     var notification = {
       type: 'message',
       date: new Date(),
@@ -18,7 +18,7 @@ module.exports = function( options ) {
   }
 
   function createEmailNotification( args, done ) {
-    console.log('Create email notification', args.message, ' to', args.to)
+    seneca.log.debug('Create email notification', args.message, ' to', args.to)
     seneca.act( {
       role: 'mail',
       cmd: 'send',

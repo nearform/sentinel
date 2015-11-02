@@ -41,12 +41,12 @@ module.exports = function ( options ) {
           try {
             resp = JSON.parse( body )
           } catch ( err ) {
-            console.log( 'Received unexpected response: ' + body )
+            seneca.log.debug( 'Received unexpected response: ' + body )
             return done( null, {err: true, msg: 'Received unexpected response: ' + body} )
           }
 
           if (resp.err){
-            console.log( 'Received unexpected response: ' + body )
+            seneca.log.debug( 'Received unexpected response: ' + body )
             return done( null, {err: true, msg: body} )
           }
 
@@ -56,7 +56,7 @@ module.exports = function ( options ) {
             try {
               resp = JSON.parse( resp )
             } catch ( err ) {
-              console.log( 'Received unexpected response: ' + resp )
+              seneca.log.debug( 'Received unexpected response: ' + resp )
               return done( null, {err: true, msg: 'Received unexpected response: ' + resp} )
             }
 

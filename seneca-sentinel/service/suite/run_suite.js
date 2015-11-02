@@ -161,7 +161,7 @@ module.exports = function( options ) {
           // extract variables
           // save them in test context for UI and also in suite context for next requests
           test_context.variables = extractVariables( response ) || []
-          console.log(test_context.variables)
+          seneca.log.debug(test_context.variables)
           for( var i in test_context.variables ) {
             if( test_context.variables[i].valid ) {
               suite_context.variables[test_context.variables[i].name] = test_context.variables[i].value
@@ -226,14 +226,14 @@ module.exports = function( options ) {
           }
           else {
             variable_data.message = "Cannot extract variable " + variable.name + ' missing ' + tokens[j] + ' key.'
-            console.log( variable_data.message )
+            seneca.log.debug( variable_data.message )
             return variable_data
           }
         }
 
         variable_data.valid = true
         variable_data.value = value
-        console.log( "Extracted variable", variable.name, value )
+        seneca.log.debug( "Extracted variable", variable.name, value )
         return variable_data
       }
     }
@@ -411,7 +411,7 @@ module.exports = function( options ) {
           test_context.response = JSON.parse( body )
         }
         catch( err ) {
-          console.log( 'Received unexpected response: ' + body )
+          seneca.log.debug( 'Received unexpected response: ' + body )
         }
 
         if( 200 != response.statusCode ) {
@@ -490,7 +490,7 @@ module.exports = function( options ) {
           }
 
           sendRequest( context, function(err, test_context){
-            console.log('******************************', err, test_context)
+            seneca.log.debug('******************************', err, test_context)
             done()
           } )
           return
