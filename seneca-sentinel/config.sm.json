@@ -11,9 +11,7 @@
             "success" : [
               {
                 "schema": {
-                  "response": {
-                    "err": {"eq$":false}
-                  }
+                  "err": false
                 },
                 "state": "IDENTIFIED"
               }
@@ -31,9 +29,7 @@
             "success" : [
               {
                 "schema": {
-                  "response": {
-                    "err": {"eq$":false}
-                  }
+                  "err": false
                 },
                 "state": "MONITORING"
               }
@@ -51,9 +47,7 @@
             "success" : [
               {
                 "schema": {
-                  "response": {
-                    "err": {"eq$":false}
-                  }
+                  "err": false
                 },
                 "state": "MONITORING"
               }
