@@ -35,7 +35,7 @@ module.exports = function( options ) {
       return done( null, {ok: true} )
     }
     else {
-      console.log( 'AUTH rejected.', remote_token, token )
+      seneca.log.debug( 'Authorize rejected.', remote_token, token )
       return done( null, {ok: false} )
     }
   }

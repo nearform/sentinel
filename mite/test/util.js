@@ -39,7 +39,7 @@ exports.init = function( options, cb ) {
         prefix: '/api',
         pin: {role: 'test', cmd: '*'},
         map: {
-          service: { GET: true },
+          service:  { GET: true },
           service2: { GET: true }
         }
       }

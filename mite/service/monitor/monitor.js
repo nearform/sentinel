@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = function() {
+module.exports = function () {
   var seneca = this;
 
   var monitor_id
@@ -11,22 +11,36 @@ module.exports = function() {
 
   function set_configuration( args, done ) {
 
-    configuration = args.configuration
-
-    if( !configuration.max_samples || !configuration.rate_interval ) {
+    if ( !args.configuration.max_samples || !args.configuration.rate_interval ) {
       return done( null, {ok: false, msg: 'Cannot start monitoring, invalid configuration data'} )
     }
 
-    var interval = configuration.rate_interval * 1000
+    var max_samples = args.configuration.max_samples
+    var rate_interval = args.configuration.rate_interval
+
+    if ( isNaN( max_samples ) ) {
+      seneca.log.debug( 'Received an invalid max_samples', max_samples, 'replace with default value 10' )
+      max_samples = 10
+    }
+
+    if ( isNaN( rate_interval ) ) {
+      seneca.log.debug( 'Received an invalid rate_interval', rate_interval, 'replace with default value 600' )
+      rate_interval = 600
+    }
+
+    var configuration = {
+      rate_interval: parseInt(rate_interval) * 1000,
+      max_samples: parseInt(max_samples)
+    }
 
     // need to make sure no monitor is active
-    if( monitor_id ) {
+    if ( monitor_id ) {
       clearInterval( monitor_id )
     }
 
-    monitor_id = setInterval( function() {
+    monitor_id = setInterval( function () {
       monitorOS()
-    }, interval )
+    }, configuration.rate_interval )
 
     monitorOS()
 
@@ -35,13 +49,14 @@ module.exports = function() {
 
 
   function monitorOS() {
-    seneca.act( "role: 'status', get: 'os'", function( err, statusData ) {
-      if( err ) {
+    seneca.act( "role: 'status', get: 'os'", function ( err, statusData ) {
+      if ( err ) {
+        seneca.log.debug( 'Error receiving os status', err )
         return
       }
 
       status_data.push( statusData )
-      if( status_data.length > 1 && status_data.length > configuration.max_samples ) {
+      if ( status_data.length > 1 && status_data.length > configuration.max_samples ) {
         status_data.splice( 1, 0 )
       }
     } )

@@ -8,7 +8,7 @@ var cookieParser = require( 'cookie-parser' )
 var session = require( 'express-session' )
 
 // create a seneca instance
-var seneca = require( 'seneca' )( /*{log: 'print'}*/ )
+var seneca = require( 'seneca' )( {log: console} )
 
 seneca.use( 'user' )
 

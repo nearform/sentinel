@@ -7,7 +7,7 @@ module.exports = function( options ) {
     var cmd = args.command
     var error_codes = seneca.export( 'protocol_v1/error_codes' )
 
-    console.log( 'Received command', cmd )
+    seneca.log.debug( 'Received command', cmd )
 
     if( !cmd.command || !cmd.command.type ) {
       return done(

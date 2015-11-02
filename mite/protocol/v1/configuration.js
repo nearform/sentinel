@@ -4,7 +4,7 @@ module.exports = function( options ) {
   var seneca = this;
 
   function execute_configuration( args, done ) {
-    console.log( 'Command configuration' )
+    seneca.log.debug( 'Command configuration', args.command )
     var cmd = args.command
 
     var command_payload = cmd.payload

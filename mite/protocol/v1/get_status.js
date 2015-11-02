@@ -7,7 +7,7 @@ module.exports = function( options ) {
 
 
   function execute_get_status( args, done ) {
-    console.log( 'Command get_status' )
+    seneca.log.debug( 'Command get_status', args.command )
 
     seneca.act( "role: 'mite', get: 'os_status'", function( err, system ) {
       if( err ) {

@@ -11,6 +11,7 @@ module.exports = function( options ) {
       try {
         message = JSON.parse( decrypt.message )
       } catch ( err ) {
+        seneca.log.debug('Cannot parse message', decrypt.message)
         return response( null, {err: true, msg: 'Received unexpected response: ' + decrypt.message} )
       }
 

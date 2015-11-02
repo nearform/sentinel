@@ -9,7 +9,7 @@ module.exports = function( options ) {
 
   function execute_identify( args, done ) {
 
-    console.log( 'Command identify' )
+    seneca.log.debug('Received command identify')
 
     seneca.act( "role: 'mite', create:'auth_token'", function( err, data ) {
       if( err ) {

@@ -12,7 +12,7 @@ module.exports = function( options ) {
   }
 
   function processInjectedFolders( folders, done ) {
-    console.log( JSON.stringify( folders ) )
+    seneca.log.debug( 'Process folders:', JSON.stringify( folders ) )
 
     async.waterfall( [
       function( done ) {
@@ -31,11 +31,11 @@ module.exports = function( options ) {
       function( paths, done ) {
         var files = [];
         async.eachSeries( paths, function( path, callback ) {
-          console.log( 'Processing folder %s', path )
+          seneca.log.debug( 'Processing folder %s', path )
           walkdir( path, function( err, fileList ) {
-            console.log( 'walkdir files: %s', fileList )
+            seneca.log.debug( 'walkdir files: %s', fileList )
             if( err ) {
-              console.error( err )
+              seneca.log.error( err )
               return callback()
             }
             else {
@@ -54,19 +54,20 @@ module.exports = function( options ) {
       },
       function( files, done ) {
         async.eachSeries( files, function( file, callback ) {
-          console.log( '##############################################################################' )
-          console.log( 'Injecting file: %s', file )
+
+          seneca.log.debug( 'Injecting file: %s', file )
           seneca.use( file, options );
           callback()
         }, function( err ) {
           if( err ) {
+            seneca.log.error('Error processing file: ', file, ' error: ', err)
             return done( err )
           }
           return done();
         } )
       }],
       function( err, result ) {
-        console.log( 'Finished modules injection' )
+        seneca.log.debug( 'Finished modules injection' )
         done( err, result );
       } )
   }
