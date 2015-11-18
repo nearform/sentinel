@@ -393,9 +393,12 @@ module.exports = function( options ) {
 
     test_context.begin = new Date()
 
+    seneca.log('TRANSPORT send request: ', method, req)
+
     request[method]( req,
       function( err, response, body ) {
 
+        seneca.log('TRANSPORT received response: ', err, response, body)
         test_context.end = new Date()
 
         test_context.response = body

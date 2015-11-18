@@ -24,6 +24,8 @@ module.exports = function ( options ) {
 
     var body = JSON.stringify( {command: command} )
 
+    seneca.log('TRANSPORT sending request: ', {message: body, password: mite.key})
+
     seneca.act("role: 'crypt', encrypt: 'message'", {message: body, password: mite.key}, function(err, encrypt){
       request.post( {
           url:     url,
@@ -33,6 +35,9 @@ module.exports = function ( options ) {
           body: JSON.stringify({command: encrypt.message})
         },
         function ( err, response, body ) {
+
+          seneca.log('TRANSPORT receiving response: ', err, response, body)
+
           if ( err ) {
             return done( null, {err: true, msg: 'Cannot connect'} )
           }
