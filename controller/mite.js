@@ -23,6 +23,7 @@ module.exports = function( options ) {
       }
 
       msg.users = client.users || []
+      msg.client_name = client.name
 
       entities.getEntity( 'mite', seneca, msg ).save$( function( err, mite ) {
         if( err ) {

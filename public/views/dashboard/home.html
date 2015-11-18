@@ -35,9 +35,9 @@
                                     <td><label>{{mite.name}}</label></td>
                                     <td>{{mite.last_connect_time ? (mite.last_connect_time | date:'medium') :
                                         'Never'}}</td>
-                                    <td align="center" ng-show="'monitoring' !== mite.status"><img src="/images/fail.png"
+                                    <td align="center" ng-show="'MONITORING' !== mite.status"><img src="/images/fail.png"
                                                                                                    height="25"/></td>
-                                    <td align="center" ng-show="'monitoring' === mite.status"><img src="/images/ok.png"
+                                    <td align="center" ng-show="'MONITORING' === mite.status"><img src="/images/ok.png"
                                                                                                    height="25"/></td>
                                     <td align="center" ng-show="!mite.suites_validated"><img src="/images/fail.png"
                                                                                                    height="25"/></td>

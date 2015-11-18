@@ -181,7 +181,7 @@ module.exports = function ( options ) {
           }
 
           seneca.act( "role: 'sm_" + mite.name + "', get: 'context'", function ( err, context ) {
-            mite.status = context.state
+            mite.status = context.current_status
 
             mite.save$( function ( err, mite ) {
             } )
