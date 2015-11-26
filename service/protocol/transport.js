@@ -21,6 +21,7 @@ module.exports = function ( options ) {
     else {
       url = url + 'mite/v1/command'
     }
+    seneca.log.debug('Sending mite command to', url, ' command ', command)
 
     var body = JSON.stringify( {command: command} )
 
@@ -32,6 +33,7 @@ module.exports = function ( options ) {
           headers: {
             "Content-Type": "application/json"
           },
+          rejectUnauthorized: false,
           body: JSON.stringify({command: encrypt.message})
         },
         function ( err, response, body ) {
