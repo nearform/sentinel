@@ -1,7 +1,15 @@
 module.exports = {
-  main: {
-    port: 3000
+  https: {
+    port: 3000,
+
+    // locations for SSL certificates
+    certs: {
+      key: "certs/sentinel-key.pem",
+      cert: "certs/sentinel-cert.pem"
+    }
   },
+
+  // DB connections
   "db": {
     "name": "",
     "host": "",
@@ -12,6 +20,8 @@ module.exports = {
       "w": 1
     }
   },
+
+  // mail configuration
   "mail": {
     "mail": {
       from: "contact@sentinel.com"

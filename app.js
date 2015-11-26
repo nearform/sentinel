@@ -63,21 +63,14 @@ loadDBInstance()
 
 function loadModules () {
   processInjectedFolders(['constants', 'controller', 'service'], function () {
-//    var server = http.createServer(app)
-//    server.listen(options.main ? options.main.port : 3000)
-
-    var hskey = fs.readFileSync('certs/sentinel-key.pem');
-    var hscert = fs.readFileSync('certs/sentinel-cert.pem')
+    var hskey = fs.readFileSync(options.https.certs.key);
+    var hscert = fs.readFileSync(options.https.certs.cert)
 
     https.createServer({
       key: hskey,
       cert: hscert
     }, app)
-      .listen(8000)
-
-    var u = seneca.pin({role: 'user', cmd: '*'})
-    u.register({ nick: 'malex@gmail.com', name: 'Admin Account', email: 'malex@gmail.com', password: 'admin', active: true })
-
+      .listen(options.https.port)
   })
 }
 
