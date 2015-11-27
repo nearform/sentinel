@@ -21,19 +21,25 @@ module.exports = function ( options ) {
     else {
       url = url + 'mite/v1/command'
     }
+    seneca.log.debug('Sending mite command to', url, ' command ', command)
 
     var body = JSON.stringify( {command: command} )
 
     seneca.log('TRANSPORT sending request: ', {message: body, password: mite.key})
 
     seneca.act("role: 'crypt', encrypt: 'message'", {message: body, password: mite.key}, function(err, encrypt){
-      request.post( {
-          url:     url,
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({command: encrypt.message})
+      var req_options = {
+        url:     url,
+        headers: {
+          "Content-Type": "application/json"
         },
+        body: JSON.stringify({command: encrypt.message})
+      }
+
+      if (mite.insecure){
+        req_options.rejectUnauthorized = false
+      }
+      request.post( req_options,
         function ( err, response, body ) {
 
           seneca.log('TRANSPORT receiving response: ', err, response, body)
