@@ -35,7 +35,7 @@ Welcome to Sentinel wiki. Please choose your topic below.
 
 **Alarms**
 
-* Alarm concepts
+* Concepts
   * Events
   * Alarms
   * Notifications

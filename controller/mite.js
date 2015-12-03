@@ -121,9 +121,10 @@ module.exports = function( options ) {
 
 
   function forceConnect( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
 
-    seneca.act( "role:'mite',cmd:'connect'", {id: mite_id}, function( err ) {
+    that.act( "role:'mite',cmd:'connect'", {id: mite_id}, function( err ) {
       if( err ) {
         return response( null, {err: true, msg: 'Connect error'} )
       }
@@ -134,9 +135,10 @@ module.exports = function( options ) {
 
 
   function startMonitoring( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
 
-    seneca.act( "role:'monitoring',cmd:'start'", {id: mite_id}, function( err, mite ) {
+    that.act( "role:'monitoring',cmd:'start'", {id: mite_id}, function( err, mite ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -147,9 +149,10 @@ module.exports = function( options ) {
 
 
   function stopMonitoring( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
 
-    seneca.act( "role:'monitoring',cmd:'stop'", {id: mite_id}, function( err, mite ) {
+    that.act( "role:'monitoring',cmd:'stop'", {id: mite_id}, function( err, mite ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }

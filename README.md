@@ -1,5 +1,5 @@
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
-> A [Seneca.js](http://senecajs.org) testing toolkit
+> A [Seneca](http://senecajs.org) testing toolkit
 
 
 # Purpose
