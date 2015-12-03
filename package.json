@@ -36,7 +36,6 @@
     "seneca-jsonrest-api": "~0.3.1",
     "seneca-mail": "^0.2.2",
     "seneca-mongo-store": "^0.2.0",
-    "seneca-perm": "~0.4.0",
     "seneca-sm": "~0.0.1",
     "seneca-user": "^0.2.10",
     "serve-static": "~1.6.3"

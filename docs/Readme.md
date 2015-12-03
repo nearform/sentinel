@@ -26,12 +26,12 @@ Welcome to Sentinel wiki. Please choose your topic below.
 
 **Getting Started**
 
-* Define a client
-* Link a remote application
-* Configure test suites
-  * Simple test suites
-  * Dynamic test suites
-  * Chained test suites
+* [Define a client](./define-client.md)
+* [Link a remote application](./link-application.md)
+* [Configure test suites](./configure-test-suites.md)
+  * [Variables](./variables.md)
+  * [Chained test suites](./chained-tests.md)
+  * [Dynamic test suites](./dynamic-tests.md)
 
 **Alarms**
 
