@@ -11,5 +11,5 @@ Lead Maintainer: [Mircea Alexandru](https://github.com/mirceaalexandru)
 
 # Documentation
 
-A detailed documentation can be found ![here](/docs/Readme.md)
+A detailed documentation can be found [here](/docs/Readme.md)
 
