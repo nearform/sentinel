@@ -4,7 +4,7 @@
 
 ***
 
-[Watch your application](../public/favicon.ico)
+[](../public/favicon.ico)
 
 **Sentinel - a simple to use and configure test systems for Seneca web applications.**
 
