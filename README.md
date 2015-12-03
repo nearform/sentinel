@@ -10,5 +10,5 @@
 
 # Documentation
 
-A detailed documentation can be found [here](./docs/Readme.md)
+A detailed documentation can be found [here](https://github.com/senecajs/seneca-sentinel/blob/master/docs/Readme.md)
 
