@@ -8,6 +8,8 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function notifyEvent( args, done ) {
+    var that = this
+
     var mite_id = args.mite_id
     // read all alarms of the application
 
@@ -41,12 +43,12 @@ module.exports = function( options ) {
 
         if( current_value > on_value ) {
           // notify alarm on
-          seneca.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
+          that.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
         }
         else if( current_value < off_value ) {
           {
             // notify alarm off
-            seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
+            that.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
           }
         }
       },
@@ -57,17 +59,19 @@ module.exports = function( options ) {
 
         if( current_value && on_value === '1' ) {
           // notify alarm on
-          seneca.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
+          that.act( "start:'alarm'", {mite: mite, alarm: alarm, data: data} )
         }
         else {
           // notify alarm off
-          seneca.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
+          that.act( "stop:'alarm'", {mite: mite, alarm: alarm, data: data} )
         }
       }
     }
   }
 
   function startAlarm( args, done ) {
+    var that = this
+
     // check if alarm already on
     entities.getEntity( 'alarm', seneca ).load$(
       {

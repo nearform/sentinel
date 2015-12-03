@@ -7,6 +7,8 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function connectMite( args, done ) {
+    var that = this
+
     var mite_id = args.id
 
     entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function( err, mite ) {
@@ -14,7 +16,7 @@ module.exports = function( options ) {
         return done( err )
       }
 
-      seneca.act( "role:'mite',send:'identify'", {mite: mite}, function( err, command_response ) {
+      that.act( "role:'mite',send:'identify'", {mite: mite}, function( err, command_response ) {
         if( err ) {
           return done( err )
         }

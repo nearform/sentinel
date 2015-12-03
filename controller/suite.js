@@ -7,10 +7,11 @@ module.exports = function( options ) {
   var entities = seneca.export( 'constants/entities' )
 
   function runOnceSuite( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
     var suite_id = msg.suite_id
 
-    seneca.act( "role:'monitoring',suite_monitor: 'run'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
+    that.act( "role:'monitoring',suite_monitor: 'run'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -21,10 +22,11 @@ module.exports = function( options ) {
 
 
   function startMonitoring( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
     var suite_id = msg.suite_id
 
-    seneca.act( "role:'monitoring',suite_monitor:'start'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
+    that.act( "role:'monitoring',suite_monitor:'start'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -35,10 +37,11 @@ module.exports = function( options ) {
 
 
   function stopMonitoring( msg, response ) {
+    var that = this
     var mite_id = msg.mite_id
     var suite_id = msg.suite_id
 
-    seneca.act( "role:'monitoring',suite_monitor:'stop'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
+    that.act( "role:'monitoring',suite_monitor:'stop'", {mite_id: mite_id, suite_id: suite_id}, function( err ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -67,7 +70,8 @@ module.exports = function( options ) {
   }
 
   function replayRequest( msg, response ) {
-    seneca.act("role: 'suite', replay:'request'", msg, function(err, result){
+    var that = this
+    that.act("role: 'suite', replay:'request'", msg, function(err, result){
       if (err){
         return response(null, {err: true, msg: err})
       }
