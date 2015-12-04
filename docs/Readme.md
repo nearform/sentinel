@@ -28,10 +28,14 @@ Welcome to Sentinel wiki. Please choose your topic below.
 
 * [Define a client](./define-client.md)
 * [Link a remote application](./link-application.md)
+
+**Tests suites**
 * [Configure test suites](./configure-test-suites.md)
   * [Variables](./variables.md)
-  * [Chained test suites](./chained-tests.md)
-  * [Dynamic test suites](./dynamic-tests.md)
+  * [Chained test suites](./variables.md)
+  * [Dynamic test suites](./variables.md)
+* [Response validation](./response-validation.md)
+
 
 **Alarms**
 
