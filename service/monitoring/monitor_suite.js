@@ -58,7 +58,7 @@ module.exports = function ( options ) {
 
 
   function monitorSuite( mite_id, suite_id ) {
-    entities.getEntity( 'mite', this ).load$( {id: mite_id}, function ( err, mite ) {
+    entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function ( err, mite ) {
       if ( err ) {
         return
       }
