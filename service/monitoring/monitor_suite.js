@@ -7,15 +7,13 @@ var uuid = require( 'node-uuid' )
 var parambulator = require( 'parambulator' )
 
 module.exports = function ( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
-  var mite_status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var mite_status = this.export( 'constants/mite_status' )
   var monitor_context = {}
   var monitor_ids = {}
 
   function start_monitor() {
-    entities.getEntity( 'mite', seneca ).list$( {}, function ( err, mites ) {
+    entities.getEntity( 'mite', this ).list$( {}, function ( err, mites ) {
       if ( err ) {
         return
       }
@@ -59,7 +57,7 @@ module.exports = function ( options ) {
 
 
   function monitorSuite( mite_id, suite_id ) {
-    entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function ( err, mite ) {
+    entities.getEntity( 'mite', this ).load$( {id: mite_id}, function ( err, mite ) {
       if ( err ) {
         return
       }
@@ -69,7 +67,7 @@ module.exports = function ( options ) {
 
       for ( var i in mite.suites ) {
         if ( mite.suites[i].id === suite_id ) {
-          seneca.act( "role: 'suite', cmd: 'run_once'", {mite: mite, suite: mite.suites[i]}, function ( err ) {
+          this.act( "role: 'suite', cmd: 'run_once'", {mite: mite, suite: mite.suites[i]}, function ( err ) {
           } )
         }
       }
@@ -85,5 +83,5 @@ module.exports = function ( options ) {
 
   start_monitor()
 
-  seneca.add( {role: 'suite', cmd: 'verify_status'}, verify_status )
+  this.add( {role: 'suite', cmd: 'verify_status'}, verify_status )
 }

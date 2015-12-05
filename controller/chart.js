@@ -1,10 +1,9 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'ChartCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function loadChartData( msg, response ) {
     var data_type = msg.data_type
@@ -14,7 +13,7 @@ module.exports = function( options ) {
 
   var executor = {
     load_1: function( args, response ) {
-      entities.getEntity( 'os_status', seneca ).load$( {sort$: {date: -1}}, function( err, db ) {
+      entities.getEntity( 'os_status', this ).load$( {sort$: {date: -1}}, function( err, db ) {
         if( err || !db || db.length === 0) {
           args.total_value = 0
           args.total_label = '# CPU'
@@ -32,7 +31,7 @@ module.exports = function( options ) {
       } )
     },
     load_5: function( args, response ) {
-      entities.getEntity( 'os_status', seneca ).load$( {sort$: {date: -1}}, function( err, db ) {
+      entities.getEntity( 'os_status', this ).load$( {sort$: {date: -1}}, function( err, db ) {
         if( err || !db || db.length === 0) {
           args.total_value = 0
           args.total_label = '# CPU'
@@ -50,7 +49,7 @@ module.exports = function( options ) {
       } )
     },
     load_15: function( args, response ) {
-      entities.getEntity( 'os_status', seneca ).load$( {sort$: {date: -1}}, function( err, db ) {
+      entities.getEntity( 'os_status', this ).load$( {sort$: {date: -1}}, function( err, db ) {
         if( err || !db || db.length === 0) {
           args.total_value = 0
           args.total_label = '# CPU'
@@ -68,7 +67,7 @@ module.exports = function( options ) {
       } )
     },
     used_memory: function( args, response ) {
-      entities.getEntity( 'os_status', seneca ).load$( {sort$: {date: -1}}, function( err, db ) {
+      entities.getEntity( 'os_status', this ).load$( {sort$: {date: -1}}, function( err, db ) {
         if( err || !db || db.length === 0) {
           args.total_value = 0
           args.total_label = 'Total Memory'
@@ -105,7 +104,7 @@ module.exports = function( options ) {
       limit$: 500
     }
 
-    entities.getEntity( 'os_status_instant', seneca ).list$(
+    entities.getEntity( 'os_status_instant', this ).list$(
       q, function( err, db_data ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
@@ -129,10 +128,10 @@ module.exports = function( options ) {
     } )
   }
 
-  seneca
+  this
     .add( {role: name, cmd: 'loadChartData'}, loadChartData )
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/api/',
     pin: {role: name, cmd: '*'},

@@ -1,17 +1,16 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'mite'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function connectMite( args, done ) {
     var that = this
 
     var mite_id = args.id
 
-    entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function( err, mite ) {
+    entities.getEntity( 'mite', this ).load$( {id: mite_id}, function( err, mite ) {
       if( err ) {
         return done( err )
       }
@@ -26,6 +25,6 @@ module.exports = function( options ) {
     } )
   }
 
-  seneca
+  this
     .add( {role: name, cmd: 'connect'}, connectMite )
 }

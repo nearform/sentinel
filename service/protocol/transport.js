@@ -4,10 +4,9 @@ var request = require( 'request' )
 var _ = require('lodash')
 
 module.exports = function ( options ) {
-  var seneca = this;
   var name = 'transport'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function sendCommand( args, done ) {
     var mite = args.mite
@@ -21,13 +20,13 @@ module.exports = function ( options ) {
     else {
       url = url + 'mite/v1/command'
     }
-    seneca.log.debug('Sending mite command to', url, ' command ', command)
+    this.log.debug('Sending mite command to', url, ' command ', command)
 
     var body = JSON.stringify( {command: command} )
 
-    seneca.log('TRANSPORT sending request: ', {message: body, password: mite.key})
+    this.log('TRANSPORT sending request: ', {message: body, password: mite.key})
 
-    seneca.act("role: 'crypt', encrypt: 'message'", {message: body, password: mite.key}, function(err, encrypt){
+    v.act("role: 'crypt', encrypt: 'message'", {message: body, password: mite.key}, function(err, encrypt){
       var req_options = {
         url:     url,
         headers: {
@@ -42,7 +41,7 @@ module.exports = function ( options ) {
       request.post( req_options,
         function ( err, response, body ) {
 
-          seneca.log('TRANSPORT receiving response: ', err, response, body)
+          this.log('TRANSPORT receiving response: ', err, response, body)
 
           if ( err ) {
             return done( null, {err: true, msg: 'Cannot connect'} )
@@ -52,22 +51,22 @@ module.exports = function ( options ) {
           try {
             resp = JSON.parse( body )
           } catch ( err ) {
-            seneca.log.debug( 'Received unexpected response: ' + body )
+            this.log.debug( 'Received unexpected response: ' + body )
             return done( null, {err: true, msg: 'Received unexpected response: ' + body} )
           }
 
           if (resp.err){
-            seneca.log.debug( 'Received unexpected response: ' + body )
+            this.log.debug( 'Received unexpected response: ' + body )
             return done( null, {err: true, msg: body} )
           }
 
-          seneca.act("role: 'crypt', decrypt: 'message'", {message: resp.response, password: mite.key}, function(err, decrypt){
+          this.act("role: 'crypt', decrypt: 'message'", {message: resp.response, password: mite.key}, function(err, decrypt){
             resp = decrypt.message
 
             try {
               resp = JSON.parse( resp )
             } catch ( err ) {
-              seneca.log.debug( 'Received unexpected response: ' + resp )
+              this.log.debug( 'Received unexpected response: ' + resp )
               return done( null, {err: true, msg: 'Received unexpected response: ' + resp} )
             }
 
@@ -84,5 +83,5 @@ module.exports = function ( options ) {
     })
   }
 
-  seneca.add( {role: name, send: 'command'}, sendCommand )
+  this.add( {role: name, send: 'command'}, sendCommand )
 }

@@ -1,11 +1,8 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
-  var name = 'mite'
-
-  var entities = seneca.export( 'constants/entities' )
-  var status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var status = this.export( 'constants/mite_status' )
 
 
   function notifyConnectError( args, done ) {
@@ -23,7 +20,7 @@ module.exports = function( options ) {
       date: new Date(),
       message: 'Connection lost for application ' + mite.name
     }
-    entities.getEntity( 'notification', seneca, notification ).save$( done )
+    entities.getEntity( 'notification', this, notification ).save$( done )
   }
 
 
@@ -43,11 +40,11 @@ module.exports = function( options ) {
       date: new Date(),
       message: 'Connection established for application ' + mite.name
     }
-    entities.getEntity( 'notification', seneca, notification ).save$( done )
+    entities.getEntity( 'notification', this, notification ).save$( done )
   }
 
 
-  seneca
+  this
     .add( {role: 'notification', notify: 'connect'}, notifyConnectEstablished )
     .add( {role: 'notification', notify: 'not_connect'}, notifyConnectError )
 }

@@ -3,10 +3,8 @@
 var _ = require('lodash')
 
 module.exports = function (options) {
-  var seneca = this;
-
-  var entities = seneca.export('constants/entities')
-  var mite_status = seneca.export('constants/mite_status')
+  var entities = this.export('constants/entities')
+  var mite_status = this.export('constants/mite_status')
 
   var monitor_data = {}
 
@@ -22,7 +20,7 @@ module.exports = function (options) {
 
   function changeMonitorStatus (mite_id, monitor_status, done) {
 
-    entities.getEntity('mite', seneca).load$({id: mite_id}, function (err, mite) {
+    entities.getEntity('mite', this).load$({id: mite_id}, function (err, mite) {
       if (err) {
         return done(err)
       }
@@ -47,11 +45,11 @@ module.exports = function (options) {
           }
 
           var sm_name = create_sm_name(mite)
-          seneca.act("role: 'sm', close: 'instance'", {name: sm_name}, function (err, data) {
+          this.act("role: 'sm', close: 'instance'", {name: sm_name}, function (err, data) {
             if (err) {
-              seneca.log('Cannot close state machine', sm_name, err)
+              this.log('Cannot close state machine', sm_name, err)
             } else{
-              seneca.log('State machine', sm_name, ' closed')
+              this.log('State machine', sm_name, ' closed')
             }
           })
         }
@@ -67,7 +65,7 @@ module.exports = function (options) {
     var suite_id = args.suite_id
     var mite_id = args.mite_id
 
-    entities.getEntity('mite', seneca).load$({id: mite_id}, function (err, mite) {
+    entities.getEntity('mite', this).load$({id: mite_id}, function (err, mite) {
       if (err) {
         return done(err)
       }
@@ -77,7 +75,7 @@ module.exports = function (options) {
 
           var suite = mite.suites[i]
 
-          seneca.act("role:'suite', cmd:'run_once'", {mite: mite, suite: suite}, function () {
+          this.act("role:'suite', cmd:'run_once'", {mite: mite, suite: suite}, function () {
           })
           break
         }
@@ -101,7 +99,7 @@ module.exports = function (options) {
     var suite_id = args.suite_id
     var mite_id = args.mite_id
 
-    entities.getEntity('mite', seneca).load$({id: mite_id}, function (err, mite) {
+    entities.getEntity('mite', this).load$({id: mite_id}, function (err, mite) {
       if (err) {
         return done(err)
       }
@@ -117,11 +115,11 @@ module.exports = function (options) {
           mite.save$(function (err, mite) {
             if (monitor_status) {
               // start monitor
-              seneca.act("role:'suite', cmd:'verify_status'", {mite: mite, suite: suite}, function () {
+              this.act("role:'suite', cmd:'verify_status'", {mite: mite, suite: suite}, function () {
               })
             }
             else {
-              seneca.act("role:'suite', cmd:'verify_status'", {mite: mite, suite: suite}, function () {
+              this.act("role:'suite', cmd:'verify_status'", {mite: mite, suite: suite}, function () {
               })
               // stop monitor
             }
@@ -140,7 +138,7 @@ module.exports = function (options) {
 
 
   function start_monitor () {
-    entities.getEntity('mite', seneca).list$({}, function (err, mites) {
+    entities.getEntity('mite', this).list$({}, function (err, mites) {
       if (err) {
         return
       }
@@ -161,7 +159,7 @@ module.exports = function (options) {
     if (mite.monitoring) {
       var sm_config = require('../../config.sm.json')
       sm_config.name = create_sm_name(mite)
-      seneca.act("role: 'sm', create: 'instance'", sm_config, function () {
+      this.act("role: 'sm', create: 'instance'", sm_config, function () {
         var interval = (mite.monitor ? ( mite.monitor.interval || 10 ) : 10) * 1000
         monitor_data[mite.id] = {
           started: true,
@@ -177,12 +175,12 @@ module.exports = function (options) {
 
 
   function monitorMite (id) {
-    entities.getEntity('mite', seneca).load$({id: id}, function (err, mite) {
+    entities.getEntity('mite', this).load$({id: id}, function (err, mite) {
       if (err) {
         return
       }
 
-      seneca.act(
+      this.act(
         "role:'" + create_sm_name(mite) + "',cmd:'execute'",
         {
           mite: mite,
@@ -193,7 +191,7 @@ module.exports = function (options) {
             monitor_data[mite.id].communication_context = response.communication_context
           }
 
-          seneca.act("role: '" + create_sm_name(mite) + "', get: 'context'", function (err, context) {
+          this.act("role: '" + create_sm_name(mite) + "', get: 'context'", function (err, context) {
             mite.status = context.current_status
 
             mite.save$(function (err, mite) {
@@ -208,7 +206,7 @@ module.exports = function (options) {
     done()
   }
 
-  seneca
+  this
     .add({role: 'monitoring', cmd: 'start'}, start)
     .add({role: 'monitoring', cmd: 'stop'}, stop)
     .add({role: 'monitoring', suite_monitor: 'run'}, runSuiteMonitor)
@@ -220,96 +218,3 @@ module.exports = function (options) {
   init({}, function () {
   })
 }
-
-
-/*
- if( mite_status.NOT_CONNECTED === mite.status ) {
- console.log( 'Monitor', mite.name, 'identify' )
- seneca.act( "role:'mite',send:'identify'", {mite: mite}, function( err, response ) {
-
- if( response ) {
- if( response.err ) {
- seneca.act( "role: 'notification', notify: 'not_connect'", {mite: mite}, function() {
- } )
- mite.status = mite_status.NOT_CONNECTED
- }
- else {
- mite = _.extend( mite, response.mite )
- mite.status = mite_status.IDENTIFIED
- monitor_data[mite.id].communication_context = response.communication_context
- }
- }
- else {
- mite.status = mite_status.NOT_CONNECTED
- }
-
- mite.save$( function( err, mite ) {
- if( mite_status.NOT_CONNECTED != mite.status ) {
- monitorMite( id )
- }
- } )
- } )
- }
- else if( mite_status.IDENTIFIED === mite.status ) {
- console.log( 'Monitor', mite.name, 'configuration' )
- seneca.act(
- "role:'mite',send:'configuration'",
- {
- mite: mite,
- communication_context: monitor_data[mite.id].communication_context || {}
- }, function( err, response ) {
-
- if( response ) {
- if( response.err ) {
- mite.status = mite_status.NOT_CONNECTED
- }
- else {
- mite = _.extend( mite, response.mite )
- mite.status = mite_status.MONITORING
- }
- }
- else {
- mite.status = mite_status.NOT_CONNECTED
- }
-
- mite.save$( function( err, mite ) {
- console.log('Identified', mite.name)
- } )
- } )
- }
- else if( mite_status.MONITORING === mite.status ) {
- console.log( 'Monitor', mite.name, 'getStatus' )
- seneca.act(
- "role:'mite',send:'getStatus'",
- {
- mite: mite,
- communication_context: monitor_data[mite.id].communication_context || {}
- },
- function( err, response ) {
-
- if( response ) {
- if( response.err ) {
- mite.status = mite_status.NOT_CONNECTED
- }
- //              else {
- //                mite = _.extend( mite, response.mite )
- //              }
- }
- else {
- mite.status = mite_status.NOT_CONNECTED
- }
-
- mite.save$( function() {
- console.log('Monitoring', mite.name)
- } )
-
- } )
- }
- else {
- mite.status = mite_status.NOT_CONNECTED
- mite.save$( function() {
- console.log('Not connected', mite.name)
- } )
- }
-
- */

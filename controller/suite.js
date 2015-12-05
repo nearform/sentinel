@@ -1,10 +1,9 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'SuiteCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function runOnceSuite( msg, response ) {
     var that = this
@@ -54,7 +53,7 @@ module.exports = function( options ) {
   function listTests( msg, response ) {
     var suite_id = msg.suite_id
 
-    entities.getEntity( 'suite_test', seneca ).list$( {sort$: {end: -1}, suite_id: suite_id, limit$: 10}, function( err, tests ) {
+    entities.getEntity( 'suite_test', this ).list$( {sort$: {end: -1}, suite_id: suite_id, limit$: 10}, function( err, tests ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -81,7 +80,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: name, cmd: 'startMonitoring'}, startMonitoring )
     .add( {role: name, cmd: 'stopMonitoring'},  stopMonitoring  )
     .add( {role: name, cmd: 'runOnceSuite'},    runOnceSuite    )
@@ -89,7 +88,7 @@ module.exports = function( options ) {
     .add( {role: name, cmd: 'replayRequest'},   replayRequest   )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/api/',
     pin: {role: name, cmd: '*'},

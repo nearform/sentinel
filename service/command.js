@@ -1,10 +1,7 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
-  var name = 'mite'
-
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function sendIdentifyCommand( args, done ) {
     var that = this
@@ -82,7 +79,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: 'mite', send: 'identify'}, sendIdentifyCommand )
     .add( {role: 'mite', send: 'getStatus'}, sendGetStatusCommand )
     .add( {role: 'mite', send: 'configuration'}, sendConfigurationCommand )

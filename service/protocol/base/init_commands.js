@@ -1,11 +1,10 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'protocol'
 
-  var entities = seneca.export( 'constants/entities' )
-  var mite_status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var mite_status = this.export( 'constants/mite_status' )
 
 
   function identify( args, done ) {
@@ -43,7 +42,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: name, generate: 'identify'}, identify )
     .add( {role: name, process_response: 'identify'}, response_identify )
 }

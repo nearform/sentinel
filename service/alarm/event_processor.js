@@ -3,9 +3,7 @@
 var _ = require( 'lodash' )
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function notifyEvent( args, done ) {
     var that = this
@@ -13,7 +11,7 @@ module.exports = function( options ) {
     var mite_id = args.mite_id
     // read all alarms of the application
 
-    entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function( err, mite ) {
+    entities.getEntity( 'mite', this ).load$( {id: mite_id}, function( err, mite ) {
       if( err ) {
         return done()
       }
@@ -70,10 +68,8 @@ module.exports = function( options ) {
   }
 
   function startAlarm( args, done ) {
-    var that = this
-
     // check if alarm already on
-    entities.getEntity( 'alarm', seneca ).load$(
+    entities.getEntity( 'alarm', this ).load$(
       {
         mite_id: args.mite.id,
         alarm_id: args.alarm.id,
@@ -88,7 +84,7 @@ module.exports = function( options ) {
           return done()
         }
 
-        var alarm = entities.getEntity( 'alarm', seneca, args.alarm )
+        var alarm = entities.getEntity( 'alarm', this, args.alarm )
         alarm.onDate = new Date()
         alarm.on = true
         alarm.mite_id = args.mite.id
@@ -105,7 +101,7 @@ module.exports = function( options ) {
 
   function stopAlarm( args, done ) {
     // check if alarm already off
-    entities.getEntity( 'alarm', seneca ).load$(
+    entities.getEntity( 'alarm', this ).load$(
       {
         mite_id: args.mite.id,
         alarm_id: args.alarm.id,
@@ -179,7 +175,7 @@ module.exports = function( options ) {
     }
   }
 
-  seneca
+  this
     .add( {role: 'alarm', notify: 'data'}, notifyEvent )
     .add( {start: 'alarm'}, startAlarm )
     .add( {stop: 'alarm'}, stopAlarm )

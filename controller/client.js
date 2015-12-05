@@ -1,10 +1,9 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'ClientCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function createClient( msg, response ) {
     var user = msg.req$.user.user
@@ -28,7 +27,7 @@ module.exports = function( options ) {
       } )
     }
 
-    entities.getEntity( 'client', seneca, msg ).save$( function( err, client ) {
+    entities.getEntity( 'client', this, msg ).save$( function( err, client ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -45,7 +44,7 @@ module.exports = function( options ) {
 
     q.users = {$elemMatch: {id: user.id}}
 
-    entities.getEntity( 'client', seneca ).list$( q, function( err, clients ) {
+    entities.getEntity( 'client', this ).list$( q, function( err, clients ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -65,7 +64,7 @@ module.exports = function( options ) {
 
   function load( msg, response ) {
     var client_id = msg.client_id
-    entities.getEntity( 'client', seneca ).load$( {id: client_id}, function( err, client ) {
+    entities.getEntity( 'client', this ).load$( {id: client_id}, function( err, client ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -78,10 +77,10 @@ module.exports = function( options ) {
 
 
   function invite( msg, response ) {
-    var client_id = msg.client_id
+    var client_id = msg.client_idhis
     var invite_email = msg.email
 
-    entities.getEntity( 'client', seneca ).load$( {id: client_id}, function( err, client ) {
+    entities.getEntity( 'client', this ).load$( {id: client_id}, function( err, client ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -90,7 +89,7 @@ module.exports = function( options ) {
         return response( null, {err: true, msg: 'Invalid client'} )
       }
 
-      entities.User( seneca ).load$( {email: invite_email}, function( err, user ) {
+      entities.User( t ).load$( {email: invite_email}, function( err, user ) {
         if( err ) {
           return response( null, {err: true, msg: err} )
         }
@@ -130,7 +129,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: name, cmd: 'createClient'}, createClient )
     .add( {role: name, cmd: 'updateClient'}, createClient )
     .add( {role: name, cmd: 'list'}, list )
@@ -138,7 +137,7 @@ module.exports = function( options ) {
     .add( {role: name, cmd: 'invite'}, invite )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/api/',
     pin: {role: name, cmd: '*'},

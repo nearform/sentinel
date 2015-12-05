@@ -1,19 +1,15 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'MiteCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
-
+  var entities = this.export( 'constants/entities' )
 
   function createMite( msg, response ) {
-    var user = msg.req$.user.user
-
     msg.users = msg.users || []
 
     // retrieve client users and copy to application
-    entities.getEntity("client", seneca ).load$({id: msg.client_id}, function(err, client){
+    entities.getEntity("client", this ).load$({id: msg.client_id}, function(err, client){
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -25,7 +21,7 @@ module.exports = function( options ) {
       msg.users = client.users || []
       msg.client_name = client.name
 
-      entities.getEntity( 'mite', seneca, msg ).save$( function( err, mite ) {
+      entities.getEntity( 'mite', this, msg ).save$( function( err, mite ) {
         if( err ) {
           return response( null, {err: true, msg: err} )
         }
@@ -43,7 +39,7 @@ module.exports = function( options ) {
     q.users = {$elemMatch: {id:user.id}}
     q.sort$ = {client_id: -1}
 
-    entities.getEntity( 'mite', seneca ).list$(
+    entities.getEntity( 'mite', this ).list$(
       q
 //      {
 //        fields$:
@@ -80,7 +76,7 @@ module.exports = function( options ) {
 
   function load( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'mite', seneca ).load$( {id: mite_id}, function( err, mite ) {
+    entities.getEntity( 'mite', this ).load$( {id: mite_id}, function( err, mite ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -94,7 +90,7 @@ module.exports = function( options ) {
 
   function os_status( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'os_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
+    entities.getEntity( 'os_status', this ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -108,7 +104,7 @@ module.exports = function( options ) {
 
   function seneca_status( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'seneca_status', seneca ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
+    entities.getEntity( 'seneca_status', this ).load$( {mite_id: mite_id, sort$: {date: -1}}, function( err, status ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -167,19 +163,19 @@ module.exports = function( options ) {
       return response(null, {err: true, msg: 'No valid application.'})
     }
 
-    entities.getEntity('mite', seneca ).delete$({id: mite_id}, function(err){
+    entities.getEntity('mite', this ).delete$({id: mite_id}, function(err){
       if (err){
         return response(null, {err: true, msg: 'Some error occured'})
       }
 
       // this should be changed
       // now ignore errors, try to delete as much as possible
-      entities.getEntity('api_doc', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
-        entities.getEntity('notification', seneca ).delete$({"mite.id": mite_id, all$: true}, function(){
-          entities.getEntity('os_status', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
-            entities.getEntity('os_status_instant', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
-              entities.getEntity('seneca_status', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
-                entities.getEntity('suite_test', seneca ).delete$({mite_id: mite_id, all$: true}, function(){
+      entities.getEntity('api_doc', this ).delete$({mite_id: mite_id, all$: true}, function(){
+        entities.getEntity('notification', this ).delete$({"mite.id": mite_id, all$: true}, function(){
+          entities.getEntity('os_status', this ).delete$({mite_id: mite_id, all$: true}, function(){
+            entities.getEntity('os_status_instant', this ).delete$({mite_id: mite_id, all$: true}, function(){
+              entities.getEntity('seneca_status', this ).delete$({mite_id: mite_id, all$: true}, function(){
+                entities.getEntity('suite_test', this ).delete$({mite_id: mite_id, all$: true}, function(){
                   response(null, {err: false})
                 })
               })
@@ -191,7 +187,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: name, cmd: 'deleteMite'}, deleteMite )
     .add( {role: name, cmd: 'createMite'}, createMite )
     .add( {role: name, cmd: 'updateMite'}, createMite )
@@ -205,7 +201,7 @@ module.exports = function( options ) {
     .add( {role: name, cmd: 'seneca_status'}, seneca_status )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/api/',
     pin: {role: name, cmd: '*'},

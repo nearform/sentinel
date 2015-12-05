@@ -7,10 +7,8 @@ var uuid = require( 'node-uuid' )
 var parambulator = require( 'parambulator' )
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
-  var mite_status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var mite_status = this.export( 'constants/mite_status' )
 
   function runOnce( args, done ) {
     var suite = args.suite
@@ -29,7 +27,7 @@ module.exports = function( options ) {
     // callback call - test will run in background
     done()
 
-    entities.getEntity( 'suite_test', seneca, suite_context ).save$( function( err, suite_context ) {
+    entities.getEntity( 'suite_test', this, suite_context ).save$( function( err, suite_context ) {
       if( err ) {
         return
       }
@@ -54,10 +52,10 @@ module.exports = function( options ) {
           }
         }
 
-//          seneca.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
+//          this.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
 
         suite_context.save$( function( err ) {
-          entities.getEntity( 'mite', seneca ).load$( {id: mite.id}, function( err, mite ) {
+          entities.getEntity( 'mite', this ).load$( {id: mite.id}, function( err, mite ) {
             if( err ) {
               return
             }
@@ -161,7 +159,7 @@ module.exports = function( options ) {
           // extract variables
           // save them in test context for UI and also in suite context for next requests
           test_context.variables = extractVariables( response ) || []
-          seneca.log.debug(test_context.variables)
+          this.log.debug(test_context.variables)
           for( var i in test_context.variables ) {
             if( test_context.variables[i].valid ) {
               suite_context.variables[test_context.variables[i].name] = test_context.variables[i].value
@@ -226,14 +224,14 @@ module.exports = function( options ) {
           }
           else {
             variable_data.message = "Cannot extract variable " + variable.name + ' missing ' + tokens[j] + ' key.'
-            seneca.log.debug( variable_data.message )
+            this.log.debug( variable_data.message )
             return variable_data
           }
         }
 
         variable_data.valid = true
         variable_data.value = value
-        seneca.log.debug( "Extracted variable", variable.name, value )
+        this.log.debug( "Extracted variable", variable.name, value )
         return variable_data
       }
     }
@@ -264,7 +262,7 @@ module.exports = function( options ) {
       suite_context.operations.push( operation_data )
 
       if( operation_data.validated ) {
-        seneca.act( "role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id} )
+        this.act( "role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id} )
       }
     }
 
@@ -393,12 +391,12 @@ module.exports = function( options ) {
 
     test_context.begin = new Date()
 
-    seneca.log('TRANSPORT send request: ', method, req)
+    this.log('TRANSPORT send request: ', method, req)
 
     request[method]( req,
       function( err, response, body ) {
 
-        seneca.log('TRANSPORT received response: ', err, response, body)
+        this.log('TRANSPORT received response: ', err, response, body)
         test_context.end = new Date()
 
         test_context.response = body
@@ -414,7 +412,7 @@ module.exports = function( options ) {
           test_context.response = JSON.parse( body )
         }
         catch( err ) {
-          seneca.log.debug( 'Received unexpected response: ' + body )
+          this.log.debug( 'Received unexpected response: ' + body )
         }
 
         if( 200 != response.statusCode ) {
@@ -457,7 +455,7 @@ module.exports = function( options ) {
     var suite_id = args.suite_id
     var url = args.url
 
-    entities.getEntity('suite_test', seneca ).load$({id: test_id}, function(err, test){
+    entities.getEntity('suite_test', this ).load$({id: test_id}, function(err, test){
       if (err){
         return done(err)
       }
@@ -493,7 +491,7 @@ module.exports = function( options ) {
           }
 
           sendRequest( context, function(err, test_context){
-            seneca.log.debug('******************************', err, test_context)
+            this.log.debug('******************************', err, test_context)
             done()
           } )
           return
@@ -524,7 +522,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: 'suite', cmd: 'run_once'}, runOnce )
     .add( {role: 'suite', replay: 'request'}, replay_request )
 }

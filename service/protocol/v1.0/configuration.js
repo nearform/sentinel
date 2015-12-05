@@ -3,10 +3,8 @@
 var _ = require( 'lodash' )
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
-  var mite_status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var mite_status = v.export( 'constants/mite_status' )
 
   function configuration( args, done ) {
     var mite = args.mite
@@ -39,7 +37,7 @@ module.exports = function( options ) {
 
   }
 
-  seneca
+  this
     .add( {role: 'protocol_v1', generate: 'configuration'}, configuration )
     .add( {role: 'protocol_v1', process_response: 'configuration'}, response_configuration )
 }

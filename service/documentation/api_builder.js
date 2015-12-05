@@ -4,21 +4,19 @@ var _ = require( 'lodash' )
 var uuid = require( 'node-uuid' )
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function update_data( args, done ) {
     var mite_id = args.mite_id
     var web_api = args.web_api
 
-    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function( err, api_doc ) {
+    entities.getEntity( 'api_doc', this ).load$( {mite_id: mite_id}, function( err, api_doc ) {
       if( err ) {
         return done( err )
       }
 
       if( !api_doc ) {
-        api_doc = entities.getEntity( 'api_doc', seneca, {
+        api_doc = entities.getEntity( 'api_doc', this, {
           mite_id: mite_id
         } )
       }
@@ -80,7 +78,7 @@ module.exports = function( options ) {
     var urlConfig = args.urlConfig
     var operation_data = args.operation_data
 
-    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function( err, api_doc ) {
+    entities.getEntity( 'api_doc', this ).load$( {mite_id: mite_id}, function( err, api_doc ) {
       if( err ) {
         return done( err )
       }
@@ -172,7 +170,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: 'documentation', update: 'data'}, update_data )
     .add( {role: 'documentation', update: 'api'}, update_api )
 }

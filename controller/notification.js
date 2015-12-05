@@ -1,10 +1,9 @@
 "use strict"
 
 module.exports = function ( options ) {
-  var seneca = this;
   var name = 'NotificationCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
 
   function retrieve( msg, response ) {
@@ -15,7 +14,7 @@ module.exports = function ( options ) {
     q.users = {$elemMatch: {id: user.id}}
     q['fields$'] = {id: true}
 
-    entities.getEntity( 'mite', seneca ).list$(
+    entities.getEntity( 'mite', this ).list$(
       q
       , function ( err, mites ) {
         if ( err ) {
@@ -33,7 +32,7 @@ module.exports = function ( options ) {
           "mite.id": {$in: access_list}
         }
 
-        entities.getEntity( 'notification', seneca ).list$(
+        entities.getEntity( 'notification', this ).list$(
           q, function ( err, notifications ) {
           if ( err ) {
             return response( null, {err: true, msg: err} )
@@ -49,11 +48,11 @@ module.exports = function ( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: name, cmd: 'retrieve'}, retrieve )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name:   name,
     prefix: '/api/',
     pin:    {role: name, cmd: '*'},

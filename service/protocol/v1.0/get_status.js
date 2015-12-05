@@ -6,10 +6,8 @@ var async = require( 'async' )
 
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
-  var mite_status = seneca.export( 'constants/mite_status' )
+  var entities = this.export( 'constants/entities' )
+  var mite_status = this.export( 'constants/mite_status' )
 
   var hist_data = {
     'load_1': true,
@@ -55,7 +53,7 @@ module.exports = function( options ) {
       async.eachLimit( response.payload.os, 10, saveOSStatus, function() {
       } )
 
-      seneca.act( "role:'documentation', update:'data'", {mite_id: mite.id, web_api: mite.web_api} )
+      this.act( "role:'documentation', update:'data'", {mite_id: mite.id, web_api: mite.web_api} )
     }
 
     done( null, { response: response, mite: mite } )
@@ -66,12 +64,12 @@ module.exports = function( options ) {
         return
       }
       status.mite_id = mite.id
-      entities.getEntity( 'seneca_status', seneca ).load$( {mite_id: mite.id}, function( err, db ) {
+      entities.getEntity( 'seneca_status', this ).load$( {mite_id: mite.id}, function( err, db ) {
         if( err ) {
           return
         }
         if( !db ) {
-          db = entities.getEntity( 'seneca_status', seneca )
+          db = entities.getEntity( 'seneca_status', this )
         }
         db = _.extend( db, status )
 
@@ -82,13 +80,13 @@ module.exports = function( options ) {
 
     function saveOSStatus( status, done ) {
       status.mite_id = mite.id
-      entities.getEntity( 'os_status', seneca, status ).save$( function() {
+      entities.getEntity( 'os_status', this, status ).save$( function() {
         if( status.data ) {
           for( var i in status.data ) {
             status.data[i].mite_id = mite.id
             status.data[i].date = new Date( status.date )
             if( hist_data[status.data[i].data_type] ) {
-              entities.getEntity( 'os_status_instant', seneca, status.data[i] ).save$()
+              entities.getEntity( 'os_status_instant', this, status.data[i] ).save$()
             }
             processAlarm( status.data[i] )
           }
@@ -100,11 +98,11 @@ module.exports = function( options ) {
 
   function processAlarm( data ) {
     if( 'application_restarted' === data.data_type ) {
-      seneca.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
+      this.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
       return
     }
     if( 'memory_usage' === data.data_type ) {
-      seneca.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
+      this.act( "role: 'alarm', notify:'data'", { mite_id: data.mite_id, data: data} )
       return
     }
   }
@@ -137,7 +135,7 @@ module.exports = function( options ) {
   }
 
 
-  seneca
+  this
     .add( {role: 'protocol_v1', generate: 'get_status'}, get_status )
     .add( {role: 'protocol_v1', process_response: 'get_status'}, response_get_status )
 }

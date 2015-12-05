@@ -1,13 +1,12 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'UserCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function list( msg, response ) {
-    entities.User( seneca ).list$(
+    entities.User( this ).list$(
       {
         fields$: {
           id: true,
@@ -33,11 +32,11 @@ module.exports = function( options ) {
     } )
   }
 
-  seneca
+  this
     .add( {role: name, cmd: 'list'}, list )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/api/',
     pin: {role: name, cmd: '*'},

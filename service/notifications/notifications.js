@@ -3,23 +3,21 @@
 var _ = require( 'lodash' )
 
 module.exports = function( options ) {
-  var seneca = this;
-
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function createDashboardNotification( args, done ) {
-    seneca.log.debug('Create dashboard notification', args.message)
+    this.log.debug('Create dashboard notification', args.message)
     var notification = {
       type: 'message',
       date: new Date(),
       message: args.message
     }
-    entities.getEntity( 'notification', seneca, notification ).save$( done )
+    entities.getEntity( 'notification', this, notification ).save$( done )
   }
 
   function createEmailNotification( args, done ) {
-    seneca.log.debug('Create email notification', args.message, ' to', args.to)
-    seneca.act( {
+    this.log.debug('Create email notification', args.message, ' to', args.to)
+    this.act( {
       role: 'mail',
       cmd: 'send',
       html: args.message,
@@ -28,7 +26,7 @@ module.exports = function( options ) {
     }, done )
   }
 
-  seneca
+  this
     .add( {role: 'notification', create: 'dashboard'}, createDashboardNotification )
     .add( {role: 'notification', send: 'email'}, createEmailNotification )
 }

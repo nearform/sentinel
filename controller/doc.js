@@ -1,14 +1,13 @@
 "use strict"
 
 module.exports = function( options ) {
-  var seneca = this;
   var name = 'DocCtrl'
 
   var entities = seneca.export( 'constants/entities' )
 
   function load( msg, response ) {
     var mite_id = msg.mite_id
-    entities.getEntity( 'api_doc', seneca ).load$( {mite_id: mite_id}, function( err, doc ) {
+    entities.getEntity( 'api_doc', this ).load$( {mite_id: mite_id}, function( err, doc ) {
       if( err ) {
         return response( null, {err: true, msg: err} )
       }
@@ -19,11 +18,11 @@ module.exports = function( options ) {
     } )
   }
 
-  seneca
+  this
     .add( {role: name, cmd: 'load'}, load )
 
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/pbl/',
     pin: {role: name, cmd: '*'},
