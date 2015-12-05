@@ -219,7 +219,7 @@ module.exports = function( options ) {
     }
   }} )
 
-  seneca.act( {role: 'web', use: {
+  this.act( {role: 'web', use: {
     name: name,
     prefix: '/pbl/',
     pin: {role: name, cmd: '*'},

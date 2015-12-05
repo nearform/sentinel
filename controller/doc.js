@@ -3,7 +3,7 @@
 module.exports = function( options ) {
   var name = 'DocCtrl'
 
-  var entities = seneca.export( 'constants/entities' )
+  var entities = this.export( 'constants/entities' )
 
   function load( msg, response ) {
     var mite_id = msg.mite_id

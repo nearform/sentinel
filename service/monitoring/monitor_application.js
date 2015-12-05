@@ -3,6 +3,8 @@
 var _ = require('lodash')
 
 module.exports = function (options) {
+  var seneca = this
+
   var entities = this.export('constants/entities')
   var mite_status = this.export('constants/mite_status')
 
@@ -138,7 +140,7 @@ module.exports = function (options) {
 
 
   function start_monitor () {
-    entities.getEntity('mite', this).list$({}, function (err, mites) {
+    entities.getEntity('mite', seneca).list$({}, function (err, mites) {
       if (err) {
         return
       }
@@ -159,7 +161,7 @@ module.exports = function (options) {
     if (mite.monitoring) {
       var sm_config = require('../../config.sm.json')
       sm_config.name = create_sm_name(mite)
-      this.act("role: 'sm', create: 'instance'", sm_config, function () {
+      seneca.act("role: 'sm', create: 'instance'", sm_config, function () {
         var interval = (mite.monitor ? ( mite.monitor.interval || 10 ) : 10) * 1000
         monitor_data[mite.id] = {
           started: true,
@@ -175,7 +177,7 @@ module.exports = function (options) {
 
 
   function monitorMite (id) {
-    entities.getEntity('mite', this).load$({id: id}, function (err, mite) {
+    entities.getEntity('mite', seneca).load$({id: id}, function (err, mite) {
       if (err) {
         return
       }

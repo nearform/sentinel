@@ -7,13 +7,14 @@ var uuid = require( 'node-uuid' )
 var parambulator = require( 'parambulator' )
 
 module.exports = function ( options ) {
+  var seneca = this
   var entities = this.export( 'constants/entities' )
   var mite_status = this.export( 'constants/mite_status' )
   var monitor_context = {}
   var monitor_ids = {}
 
   function start_monitor() {
-    entities.getEntity( 'mite', this ).list$( {}, function ( err, mites ) {
+    entities.getEntity( 'mite', seneca ).list$( {}, function ( err, mites ) {
       if ( err ) {
         return
       }

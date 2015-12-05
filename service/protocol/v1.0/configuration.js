@@ -4,7 +4,7 @@ var _ = require( 'lodash' )
 
 module.exports = function( options ) {
   var entities = this.export( 'constants/entities' )
-  var mite_status = v.export( 'constants/mite_status' )
+  var mite_status = this.export( 'constants/mite_status' )
 
   function configuration( args, done ) {
     var mite = args.mite
