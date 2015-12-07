@@ -6,4 +6,4 @@ and tested.
 
 The Manage/Client sidebar option menu  can be used to manage the registered clients.
 
-![Define client](senecajs.github.com/seneca-sentinel/docs/img/define-client.jpeg)
+![Define client](./img/define-client.jpeg)
