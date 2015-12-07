@@ -39,13 +39,15 @@ Response body:
 }
 ```
 
-Variables
-
+#### Example
 
 | Property | Value |
 |----------|-------|
 | user | ``` { "nick": "u1", "email": "u1@example.com", "name": "nu1", .....} ``` |
 | user.id | ``` "3fy5gc" ``` |
+
+![Response variables](./img/response-variables.jpeg)
+
 
 ### System variables
 
@@ -55,6 +57,8 @@ These are a set of predefined variables types that can be defined in the same wa
 * ```<<random_number>>``` - for random generated number
 
 For these variables the system will generate a random value that will be stored in the corresponding variable for future usage.
+
+![System variables](./img/system-variables.jpeg)
 
 # Using variables
 
@@ -66,8 +70,3 @@ The variables can be used:
 * In the request body
 * In the request URL
 * In the response validation schema
-
-#Chained Test Suites
-
-By using response variables there can be defined test suites in which one response data can be used as part of a next request.
-
