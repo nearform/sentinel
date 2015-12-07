@@ -63,7 +63,7 @@ For these variables the system will generate a random value that will be stored 
 
 Defined variables can be used in subsequent requests for changing the url, request body or response validation schema.
 
-The syntax used for a variable is <<variable_name>>. Here are some examples for using the variables.
+The syntax used for a variable is ```<<variable_name>>```. Here are some examples for using the variables.
 
 The variables can be used:
 * In the request body
