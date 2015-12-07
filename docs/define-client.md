@@ -5,3 +5,5 @@ application instances installed, such us testing, production, a.s.o. instances. 
 and tested.
 
 The Manage/Client sidebar option menu  can be used to manage the registered clients.
+
+[](./img/define-client.jpeg)

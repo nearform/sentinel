@@ -6,29 +6,30 @@ Mite: _They have exploited an incredible array of habitats, and because of their
 
 This plugin will be loaded in the seneca instance of the target application.
 
-Features:
+Examples of starting an application with mite plugin are [here](https://github.com/mirceaalexandru/seneca-mite-demo)
 
-* MOST IMPORTANT: should have minimum impact (minimum footprint) on the target application.
-* report information about the exposed application HTTP API and HTTP configuration
-* report status information about the application and host machine, like memory usage, up time, others.
-
-## Installation
-
-This plugin will be installed and can run like any other Seneca plugin.
-
-### Install
+## Installing
 
 `
-npm install mite --save
+npm install seneca-mite --save
 `
 
-### Use
+## Usage
 
 `
-var seneca = require('seneca')()
-seneca.use('mite', config)
+// create a seneca instance
+var seneca = require( 'seneca' )(  )
+
+seneca.use( 'mite', options )
 `
 
-## Supported WEB application frameworks
+## Options
 
-Mite is supporting [Express](http://expressjs.com/) and [Hapi](http://hapijs.com/).
+Mite plugin accepts following options:
+* key - string key to use for encrypting/decrypting messages in Sentinel Protocol. Same key should be set in the Sentinel.
+
+## Support Web applications
+
+Mite plugin is supporting now Express based Seneca applications (is using seneca-web internally for reporting and for registering routes).
+
+In near future support for Hapi will be added.

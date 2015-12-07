@@ -24,7 +24,7 @@ Welcome to Sentinel wiki. Please choose your topic below.
 
 * [Application security](./security.md)
 
-**Getting Started**
+**How to**
 
 * [Define a client](./define-client.md)
 * [Link a remote application](./link-application.md)

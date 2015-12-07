@@ -2,11 +2,16 @@
 > A [Seneca](http://senecajs.org) testing toolkit
 
 
-# Purpose
+# Goals
 
-  * A production test system to test the external API of a Seneca application
-  * Need to be able to export the API description from seneca-web of all APIs
-  * A separate plugin/applition will run continuous tests against this API.
+* Very simple to use and configure test application.
+* Configure and forget - after test suites and alarms are configured there is no need to check the Sentinel's UI for data - user will receive notifications for internal events.
+* Validate the external API of a Seneca system - i.e. the HTTP urls etc.
+* Is able to retrieve the HTTP API description from seneca-web from target application.
+* Provides a separate plugin that runs inside the target application for reporting internal data/events.
+* Easy to configure test suites - including dynamic and chained test suites.
+* Send notifications for configured events.
+* Automatically creates API documentation for monitored web application.
 
 # Documentation
 
