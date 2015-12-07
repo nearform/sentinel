@@ -11,4 +11,6 @@ Some parameters needs to be configured:
 When a get status is received from Sentinel all this data will be sent and then cleared from memory.
 * Mite maximum data samples - In the case that Sentinel will not require data for a long time interval from mite then the data acquired by the mite plugin can accumulate.
 To prevent any problem with the target application this parameter will control how maximum data samples are preserved between two getStatus request.
-* These last two parameters should be set with care to prevent affecting the target application.
+* These last two parameters should be set with care to prevent affecting the host application.
+
+![Link remote application](./img/configure-mite.jpeg)
