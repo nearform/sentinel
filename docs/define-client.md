@@ -7,3 +7,11 @@ and tested.
 The Manage/Client sidebar option menu  can be used to manage the registered clients.
 
 ![Define client](./img/define-client.jpeg)
+
+By accessing the Edit button:
+* The client options can be changed
+* Control user access by inviting new users.
+
+![Configure client](./img/configure-client.jpeg)
+
+
