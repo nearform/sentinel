@@ -1,5 +1,3 @@
-Back to [TOC](./Readme.md)
-
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
 > A [Seneca](http://senecajs.org) testing toolkit
 
@@ -43,6 +41,7 @@ Welcome to Sentinel wiki. Please choose your topic below.
   * [Chained test suites](./chained-tests.md)
   * [Dynamic test suites](./dynamic-tests.md)
 * [Response validation](./response-validation.md)
+* Verify test suite results
 
 
 **Monitoring application**
