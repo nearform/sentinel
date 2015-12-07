@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 # Start/Stop monitoring a remote application
 
 This can be done from Application management page. In that page is presented a list with application the user can access,

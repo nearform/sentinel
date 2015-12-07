@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
 > A [Seneca.js] testing toolkit
 

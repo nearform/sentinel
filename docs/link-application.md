@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 # Link an application
 
 More applications can be configured on the same Sentinel instance. This will help monitor multiple instances of applications installed for a client.

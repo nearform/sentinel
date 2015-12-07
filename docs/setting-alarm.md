@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 # Configuring an Alarm
 
 From applications page select Alarm button for desired application. Following page is displayed:

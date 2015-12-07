@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 # Configure test suites
 
 The test suites management page allow following operations:
