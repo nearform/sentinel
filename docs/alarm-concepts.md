@@ -1,3 +1,5 @@
+Back to [TOC](./Readme.md)
+
 # Alarm concepts
 
 * Event - represent data changed, connection status, application restarted, test suite execution status. Event values can be boolean or numeric.
