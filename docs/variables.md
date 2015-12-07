@@ -51,7 +51,7 @@ Variables
 
 These are a set of predefined variables types that can be defined in the same way as the response variables, only for property the allowed values are:
 
-* <<random_string>>
+* <<<<random_string>>
 * <<random_number>>
 
 For these variables the system will generate a random value that will be stored in the corresponding variable for future usage.
