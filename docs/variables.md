@@ -44,15 +44,7 @@ Variables
 
 | Property | Value |
 |----------|-------|
-| user | ```
-{
-  "nick": "u1",
-  "email": "u1@example.com",
-  "name": "nu1",
-  "when": "2015-10-23T12:09:20.198Z",
-  "id": "3fy5gc"
-}
-``` |
+| user | ``` { "nick": "u1", "email": "u1@example.com", "name": "nu1", .....}``` |
 | user.id | `"3fy5gc"` |
 
 ### System variables
