@@ -19,3 +19,4 @@ Using this page it can be managed the tests belonging to a test suite. The impor
 * Body: the body of the requests to be sent. Should be JSON.
 * Extend body: another JSON used to extend the current request body. This is mainly useful to modify content of a body that uses variables - see [Chained test suites](./chained-tests.md).
 
+![Configure test suites](./img/configure-suites.jpeg)
