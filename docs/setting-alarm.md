@@ -15,4 +15,4 @@ For each alarm some parameters should be set:
   * dashboard notifications
 
 
-![Edit alarm](./img/configure-alarm.jpeg)
+![Edit alarm](./img/edit-alarm.jpeg)
