@@ -28,6 +28,7 @@ Welcome to Sentinel wiki. Please choose your topic below.
 
 * [Define a client](./define-client.md)
 * [Link a remote application](./link-application.md)
+* [Start/stop monitoring a remote application](./monitor-application.md)
 
 **Tests suites**
 * [Configure test suites](./configure-test-suites.md)
