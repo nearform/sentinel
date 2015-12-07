@@ -30,6 +30,11 @@ Welcome to Sentinel wiki. Please choose your topic below.
 * [Link a remote application](./link-application.md)
 * [Start/stop monitoring a remote application](./monitor-application.md)
 
+**Alarms**
+
+* [Concepts](./alarm-concepts.md)
+* [Setting alarms](./setting-alarm.md)
+
 **Tests suites**
 * [Configure test suites](./configure-test-suites.md)
   * [Variables](./variables.md)
@@ -37,13 +42,6 @@ Welcome to Sentinel wiki. Please choose your topic below.
   * [Dynamic test suites](./variables.md)
 * [Response validation](./response-validation.md)
 
-
-**Alarms**
-
-* Concepts
-  * Events
-  * Alarms
-  * Notifications
 
 **Monitoring application**
 
