@@ -32,11 +32,8 @@ Response body:
     "nick": "u1",
     "email": "u1",
     "user": "3fy5gc",
-    "when": "2015-11-01T16:35:48.482Z",
-    "active": true,
     "why": "password",
-    "token": "46176c94-9117-4676-9a47-6814750b86b4",
-    "id": "46176c94-9117-4676-9a47-6814750b86b4"
+    ............
   },
   "ok": true
 }
@@ -46,15 +43,17 @@ Variables
 
 
 | Property | Value |
+--------------------
 user |
-`{
+```
+{
   "nick": "u1",
   "email": "u1@example.com",
   "name": "nu1",
   "when": "2015-10-23T12:09:20.198Z",
   "id": "3fy5gc"
 }
-` |
+``` |
 user.id | `"3fy5gc"` |
 
 ### System variables
