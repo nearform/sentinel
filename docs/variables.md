@@ -19,7 +19,7 @@ Example:
 
 Response body:
 
-`
+```
 {
   "user": {
     "nick": "u1",
@@ -40,7 +40,7 @@ Response body:
   },
   "ok": true
 }
-`
+```
 
 Variables
 
