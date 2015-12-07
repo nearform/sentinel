@@ -44,8 +44,8 @@ Variables
 
 | Property | Value |
 |----------|-------|
-| user | ``` { "nick": "u1", "email": "u1@example.com", "name": "nu1", .....}``` |
-| user.id | `"3fy5gc"` |
+| user | ``` { "nick": "u1", "email": "u1@example.com", "name": "nu1", .....} ``` |
+| user.id | ``` "3fy5gc" ``` |
 
 ### System variables
 
@@ -55,7 +55,6 @@ These are a set of predefined variables types that can be defined in the same wa
 * <<random_number>>
 
 For these variables the system will generate a random value that will be stored in the corresponding variable for future usage.
-
 
 # Using variables
 
