@@ -38,8 +38,8 @@ Welcome to Sentinel wiki. Please choose your topic below.
 **Tests suites**
 * [Configure test suites](./configure-test-suites.md)
   * [Variables](./variables.md)
-  * [Chained test suites](./variables.md#Chained Test Suites)
-  * [Dynamic test suites](./variables.md)
+  * [Chained test suites](./chained-tests.md)
+  * [Dynamic test suites](./dynamic-tests.md)
 * [Response validation](./response-validation.md)
 
 
