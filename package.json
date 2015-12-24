@@ -7,7 +7,7 @@
     "coverage": "lab -s -r lcov | coveralls",
     "test": "lab"
   },
-  "repository": "",
+  "repository": "https://github.com/nearform/sentinel",
   "author": {
     "name": "Mircea Alexandru",
     "email": "mircea.alexandru@gmail.com"
