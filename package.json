@@ -1,5 +1,5 @@
 {
-  "name": "seneca-sentinel",
+  "name": "sentinel",
   "version": "0.0.3",
   "description": "A monitoring application",
   "main": "app.js",
