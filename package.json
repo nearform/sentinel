@@ -28,7 +28,7 @@
     "optimist": "~0.6.1",
     "parambulator": "^1.5.1",
     "request": "^2.61.0",
-    "seneca": "^0.7.1",
+    "seneca": "^0.9.3",
     "seneca-admin": "~0.2.0",
     "seneca-auth": "^0.4.0",
     "seneca-crypt": "0.0.1",

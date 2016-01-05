@@ -1,16 +1,19 @@
-"use strict"
+'use strict'
 
-var _ = require( 'lodash' )
-var async = require( 'async' )
-var request = require( 'request' )
-var uuid = require( 'node-uuid' )
-var parambulator = require( 'parambulator' )
+var _ = require('lodash')
+var Async = require('async')
+var Request = require('request')
+var Parambulator = require('parambulator')
 
-module.exports = function( options ) {
-  var entities = this.export( 'constants/entities' )
-  var mite_status = this.export( 'constants/mite_status' )
+module.exports = function (options) {
+  var entities = this.export('constants/entities')
 
-  function runOnce( args, done ) {
+  function runOnce (args, done) {
+    // callback call - test will run in background
+    // TODO - not sure if it is OK
+    done()
+
+    var that = this
     var suite = args.suite
     var mite = args.mite
 
@@ -24,110 +27,110 @@ module.exports = function( options ) {
       validated: true
     }
 
-    // callback call - test will run in background
-    done()
-
-    entities.getEntity( 'suite_test', this, suite_context ).save$( function( err, suite_context ) {
-      if( err ) {
+    // save context in DB
+    entities.getEntity('suite_test', this, suite_context).save$(function (err, suite_context) {
+      if (err) {
+        that.log.error('run suite once', 'save initial context error', err)
         return
       }
 
       var lst = []
-      for( var i in suite.urls ) {
-        lst.push( {
+      for (var i in suite.urls) {
+        lst.push({
           suite_context: suite_context,
           url: suite.urls[i],
           mite: mite
-        } )
+        })
       }
 
-      async.eachSeries( lst, runTestUrl, function( err, results ) {
+      Async.eachSeries(lst, runTestUrl, function (err, results) {
+        if (err) {
+          that.log.error('suite execution error', err)
+          return
+        }
 
         suite_context.end = new Date()
 
         suite_context.validated = true
-        for( var i in suite_context.operations ) {
-          if( !suite_context.operations[i].validated ) {
+        for (var i in suite_context.operations) {
+          if (!suite_context.operations[i].validated) {
             suite_context.validated = false
           }
         }
 
 //          this.act( "role: 'alarm', notify:'data'", { mite_id: test.mite_id, data: { data_type: "suite_status", value: test.validated } } )
-
-        suite_context.save$( function( err ) {
-          entities.getEntity( 'mite', this ).load$( {id: mite.id}, function( err, mite ) {
-            if( err ) {
+        suite_context.save$(function (err) {
+          if (err) {
+            that.log.error('suite status save', err)
+            return
+          }
+          entities.getEntity('mite', this).load$({id: mite.id}, function (err, mite) {
+            if (err) {
               return
             }
 
             mite.last_connect_time = suite_context.end
             mite.suites_validated = true
 
-            for( var i in mite.suites ) {
-
+            for (var i in mite.suites) {
               // found current suite, update its status
-              if( mite.suites[i].id === suite.id ) {
+              if (mite.suites[i].id === suite.id) {
                 mite.suites[i].last_test_date = suite_context.end
                 mite.suites[i].validated = suite_context.validated
               }
 
-              if( !mite.suites[i].validated ) {
+              if (!mite.suites[i].validated) {
                 mite.suites_validated = false
               }
             }
 
-            mite.save$( function() {
-            } )
-          } )
-        } )
-      } )
-    } )
+            mite.save$(function () {
+            })
+          })
+        })
+      })
+    })
   }
 
-  function runTestUrl( context, done ) {
+  function runTestUrl (context, done) {
     var suite_context = context.suite_context
     var urlConfig = context.url
     var mite = context.mite
 
     var request = context.request
 
-    if( request ) {
+    if (request) {
       request.suite_context = suite_context
-      sendRequest( request, function( err, test_context ) {
-        processResponse( suite_context, err, test_context, done )
-      } )
+      sendRequest(request, function (err, test_context) {
+        processResponse(suite_context, err, test_context, done)
+      })
     }
     else {
-      prepareRequest( suite_context, mite, urlConfig, function( err, request_data ) {
-        if( err ) {
-          return done( err )
+      prepareRequest(suite_context, mite, urlConfig, function (err, request_data) {
+        if (err) {
+          return done(err)
         }
-        if (request_data.process_error){
-          return done( err )
+        if (request_data.process_error) {
+          return done(err)
         }
 
         request_data.suite_context = suite_context
-        sendRequest( request_data, function( err, test_context ) {
-          processResponse( suite_context, err, test_context, done )
-        } )
-      } )
+        sendRequest(request_data, function (err, test_context) {
+          processResponse(suite_context, err, test_context, done)
+        })
+      })
     }
 
-    function processResponse( suite_context, err, test_context, done ) {
+    function processResponse (suite_context, err, test_context, done) {
       test_context.err = err
 
-      if( err ) {
-        var http_status = "N/A"
-        if( err.code ) {
-          http_status = err.code
-        }
-
+      if (err) {
         test_context.validated = false
 
-        saveStatusData( suite_context, test_context )
-        if( urlConfig.stop_on_error ) {
+        saveStatusData(suite_context, test_context)
+        if (urlConfig.stop_on_error) {
           // stop next tests
-          return done( err )
+          return done(err)
         }
         else {
           return done()
@@ -136,18 +139,18 @@ module.exports = function( options ) {
 
       var response = test_context.response
       var http_response = test_context.http_response
-      test_context.statusCode = http_response ? http_response.statusCode : "N/A"
+      test_context.statusCode = http_response ? http_response.statusCode : 'N/A'
 
-      validateResponse( response, function( validate_result ) {
+      validateResponse(response, function (validate_result) {
         test_context.validate = validate_result
 
-        if( validate_result.err ) {
+        if (validate_result.err) {
           test_context.validated = false
 
-          saveStatusData( suite_context, test_context )
-          if( urlConfig.stop_on_error ) {
+          saveStatusData(suite_context, test_context)
+          if (urlConfig.stop_on_error) {
             // stop next tests
-            return done( validate_result.err )
+            return done(validate_result.err)
           }
           else {
             return done()
@@ -158,32 +161,31 @@ module.exports = function( options ) {
 
           // extract variables
           // save them in test context for UI and also in suite context for next requests
-          test_context.variables = extractVariables( response ) || []
+          test_context.variables = extractVariables(response) || []
           this.log.debug(test_context.variables)
-          for( var i in test_context.variables ) {
-            if( test_context.variables[i].valid ) {
+          for (var i in test_context.variables) {
+            if (test_context.variables[i].valid) {
               suite_context.variables[test_context.variables[i].name] = test_context.variables[i].value
             }
           }
 
-          saveStatusData( suite_context, test_context )
+          saveStatusData(suite_context, test_context)
 
           done()
         }
-      } )
+      })
     }
 
 
-    function extractVariables( response ) {
-
+    function extractVariables (response) {
       var variables = []
-      if( !urlConfig.variables ) {
+      if (!urlConfig.variables) {
         return variables
       }
 
-      for( var i in urlConfig.variables ) {
+      for (var i in urlConfig.variables) {
         var variable = urlConfig.variables[i]
-        if ('<<random_number>>' === variable.property){
+        if ('<<random_number>>' === variable.property) {
           variables.push({
             name: variable.name,
             property: variable.property,
@@ -191,7 +193,7 @@ module.exports = function( options ) {
             value: genNumber()
           })
         }
-        else if ('<<random_string>>' === variable.property){
+        else if ('<<random_string>>' === variable.property) {
           variables.push({
             name: variable.name,
             property: variable.property,
@@ -199,45 +201,45 @@ module.exports = function( options ) {
             value: genString()
           })
         }
-        else{
-          variables.push( extractVariable( variable ) )
+        else {
+          variables.push(extractVariable(variable))
         }
       }
 
       return variables
 
 
-      function extractVariable( variable ) {
+      function extractVariable (variable) {
         var variable_data = {
           name: variable.name,
           property: variable.property,
           valid: false
         }
 
-        var tokens = variable.property.split( "." )
+        var tokens = variable.property.split('.')
         var data = response
         var value
-        for( var j in tokens ) {
-          if( _.has( data, tokens[j] ) ) {
+        for (var j in tokens) {
+          if (_.has(data, tokens[j])) {
             value = data[tokens[j]]
             data = data[tokens[j]]
           }
           else {
-            variable_data.message = "Cannot extract variable " + variable.name + ' missing ' + tokens[j] + ' key.'
-            this.log.debug( variable_data.message )
+            variable_data.message = 'Cannot extract variable ' + variable.name + ' missing ' + tokens[j] + ' key.'
+            this.log.debug(variable_data.message)
             return variable_data
           }
         }
 
         variable_data.valid = true
         variable_data.value = value
-        this.log.debug( "Extracted variable", variable.name, value )
+        this.log.debug('Extracted variable', variable.name, value)
         return variable_data
       }
     }
 
 
-    function saveStatusData( suite_context, test_context ) {
+    function saveStatusData (suite_context, test_context) {
       var operation_data = {}
 
       operation_data.validated = test_context.validated
@@ -257,133 +259,133 @@ module.exports = function( options ) {
       operation_data.validate = test_context.validate
       operation_data.variables = test_context.variables
       operation_data.process_error = test_context.process_error
-      operation_data.statusCode = test_context.statusCode || "N/A"
+      operation_data.statusCode = test_context.statusCode || 'N/A'
 
-      suite_context.operations.push( operation_data )
+      suite_context.operations.push(operation_data)
 
-      if( operation_data.validated ) {
-        this.act( "role: 'documentation', update:'api'", {operation_data: operation_data, urlConfig: urlConfig, mite_id: mite.id} )
+      if (operation_data.validated) {
+        this.act("role: 'documentation', update:'api'", {
+          operation_data: operation_data,
+          urlConfig: urlConfig,
+          mite_id: mite.id
+        })
       }
     }
 
 
-    function validateResponse( response, done ) {
-      if( urlConfig.validate_response ) {
-
-        var scheme = replaceVariables( suite_context, urlConfig.validate_response )
+    function validateResponse (response, done) {
+      if (urlConfig.validate_response) {
+        var scheme = replaceVariables(suite_context, urlConfig.validate_response)
 
         try {
-          scheme = JSON.parse( scheme )
+          scheme = JSON.parse(scheme)
         }
-        catch( err ) {
-          return done( {err: false, msg: 'Invalid parambulator scheme.', scheme: urlConfig.validate_response} )
+        catch (err) {
+          return done({err: false, msg: 'Invalid parambulator scheme.', scheme: urlConfig.validate_response})
         }
 
-        var paramcheck = parambulator( scheme )
-        paramcheck.validate( response, function( err ) {
-          if( err ) {
-            return done( {err: true, msg: err.message || err, scheme: scheme} )
+        var paramcheck = Parambulator(scheme)
+        paramcheck.validate(response, function (err) {
+          if (err) {
+            return done({err: true, msg: err.message || err, scheme: scheme})
           }
-          done( {err: false, msg: 'Validated.', scheme: scheme} )
-        } )
-
+          done({err: false, msg: 'Validated.', scheme: scheme})
+        })
       }
       else {
-        done( {err: false, msg: 'No validation scheme set.', scheme: 'N/A'} )
+        done({err: false, msg: 'No validation scheme set.', scheme: 'N/A'})
       }
     }
   }
 
 
-  function replaceVariables( suite_context, body ) {
-    for( var name in suite_context.variables ) {
-
-      var re = new RegExp( '<<' + name + '>>', "g" );
+  function replaceVariables (suite_context, body) {
+    for (var name in suite_context.variables) {
+      var re = new RegExp('<<' + name + '>>', 'g')
       var value = suite_context.variables[name]
-      if( _.isObject( value ) ||
-        _.isArray( value ) ) {
-        value = JSON.stringify( value )
+      if (_.isObject(value) ||
+        _.isArray(value)) {
+        value = JSON.stringify(value)
       }
-      body = body.replace( re, value )
+      body = body.replace(re, value)
     }
     return body
   }
 
 
-  function prepareRequest( suite_context, mite, urlConfig, done ) {
+  function prepareRequest (suite_context, mite, urlConfig, done) {
     var method = urlConfig.method.toLowerCase()
-    var url = mite.protocol + "://" + mite.host + ":" + mite.port + urlConfig.url
+    var url = mite.protocol + '://' + mite.host + ':' + mite.port + urlConfig.url
 
     // validate req_body
     var req_body = urlConfig.request
 
-    url = replaceVariables( suite_context, url )
+    url = replaceVariables(suite_context, url)
 
     var req = {
       url: url
     }
-    if( req_body ) {
-      req_body = replaceVariables( suite_context, req_body )
+    if (req_body) {
+      req_body = replaceVariables(suite_context, req_body)
       try {
-        req_body = JSON.parse( req_body )
+        req_body = JSON.parse(req_body)
       }
-      catch( err ) {
-        return done( null, {
+      catch (err) {
+        return done(null, {
           url: url,
-          process_error: 'Cannot parse body as JSON, aborting... Error message: ' + err + ". Body: " + req_body
-        } )
+          process_error: 'Cannot parse body as JSON, aborting... Error message: ' + err + '. Body: ' + req_body
+        })
       }
 
-      req.headers = {"Content-Type": "application/json"}
-      req.body = JSON.stringify( req_body )
+      req.headers = {'Content-Type': 'application/json'}
+      req.body = JSON.stringify(req_body)
     }
 
     var ext
-    if( urlConfig.extend ) {
-      ext = replaceVariables( suite_context, urlConfig.extend )
+    if (urlConfig.extend) {
+      ext = replaceVariables(suite_context, urlConfig.extend)
       try {
-        ext = JSON.parse( ext )
+        ext = JSON.parse(ext)
       }
-      catch( err ) {
-        return done( null, {
+      catch (err) {
+        return done(null, {
           url: url,
-          process_error: 'Cannot parse extended body as JSON, aborting... Error message: ' + err + ". Body: " + ext
-        } )
+          process_error: 'Cannot parse extended body as JSON, aborting... Error message: ' + err + '. Body: ' + ext
+        })
       }
 
-      if( ext ) {
-        req_body = _.extend( req_body, ext )
+      if (ext) {
+        req_body = _.extend(req_body, ext)
       }
     }
 
-    req.headers = {"Content-Type": "application/json"}
-    req.body = JSON.stringify( req_body )
+    req.headers = {'Content-Type': 'application/json'}
+    req.body = JSON.stringify(req_body)
 
     var test_context = {
       url: url,
       req_body: req_body
     }
 
-    if( urlConfig.authorized && suite_context.cookie ) {
+    if (urlConfig.authorized && suite_context.cookie) {
       var cookie_str = 'seneca-login' + '=' + suite_context.cookie
       test_context.auth_token = cookie_str
 
 
-      var j = request.jar();
-      var cookie = request.cookie( cookie_str )
-      j.setCookie( cookie, url );
+      var j = Request.jar()
+      var cookie = Request.cookie(cookie_str)
+      j.setCookie(cookie, url)
       req.jar = j
     }
-    return done( null, {
+    return done(null, {
       method: method,
       req: req,
       test_context: test_context
-    } )
+    })
   }
 
 
-  function sendRequest( args, done ) {
-
+  function sendRequest (args, done) {
     var method = args.method
     var req = args.req
     var suite_context = args.suite_context
@@ -393,9 +395,8 @@ module.exports = function( options ) {
 
     this.log('TRANSPORT send request: ', method, req)
 
-    request[method]( req,
-      function( err, response, body ) {
-
+    Request[method](req,
+      function (err, response, body) {
         this.log('TRANSPORT received response: ', err, response, body)
         test_context.end = new Date()
 
@@ -404,117 +405,114 @@ module.exports = function( options ) {
         test_context.req = req
         test_context.method = method
 
-        if( err ) {
-          return done( err, test_context )
+        if (err) {
+          return done(err, test_context)
         }
 
         try {
-          test_context.response = JSON.parse( body )
+          test_context.response = JSON.parse(body)
         }
-        catch( err ) {
-          this.log.debug( 'Received unexpected response: ' + body )
+        catch (err) {
+          this.log.debug('Received unexpected response: ' + body)
         }
 
-        if( 200 != response.statusCode ) {
+        if (200 !== response.statusCode) {
           // just try to parse response, maybe....
-          return done( 'Status Code: ' + response.statusCode, test_context )
+          return done('Status Code: ' + response.statusCode, test_context)
         }
 
         // get auth-cookie - if exists
-        set_auth_cookie( suite_context, response )
+        set_auth_cookie(suite_context, response)
 
 
-        return done( err, test_context )
+        return done(err, test_context)
       }
     )
   }
 
 
-  function set_auth_cookie( suite_context, response ) {
-    if( response.headers && response.headers['set-cookie'] ) {
-
-      for( var i in response.headers['set-cookie'] ) {
+  function set_auth_cookie (suite_context, response) {
+    if (response.headers && response.headers['set-cookie']) {
+      for (var i in response.headers['set-cookie']) {
         var cookie_str = response.headers['set-cookie'][i]
-        var index = cookie_str.indexOf( '=' )
-        if( index > 0 ) {
-          var cookie_name = cookie_str.substr( 0, index )
-          var cookie_value = cookie_str.substr( index + 1 )
-          if( cookie_name === 'seneca-login' ) {
-            suite_context.cookie = cookie_value.split( ';' )[0]
+        var index = cookie_str.indexOf('=')
+        if (index > 0) {
+          var cookie_name = cookie_str.substr(0, index)
+          var cookie_value = cookie_str.substr(index + 1)
+          if (cookie_name === 'seneca-login') {
+            suite_context.cookie = cookie_value.split(';')[0]
             break
           }
-
         }
       }
     }
   }
 
 
-  function replay_request( args, done ) {
+  function replay_request (args, done) {
     var test_id = args.test_id
-    var suite_id = args.suite_id
     var url = args.url
 
-    entities.getEntity('suite_test', this ).load$({id: test_id}, function(err, test){
-      if (err){
+    entities.getEntity('suite_test', this).load$({id: test_id}, function (err, test) {
+      if (err) {
         return done(err)
       }
 
-      if (!test){
+      if (!test) {
         return done('Invalid test selected')
       }
 
       var found = false
-      for (var i in test.operations){
-        if (test.operations[i].request.req.url === url){
+      for (var i in test.operations) {
+        if (test.operations[i].request.req.url === url) {
           found = true
 
           var req = test.operations[i].request.req
           delete req.jar
           var test_context = {}
 
-          if( test.operations[i].request.auth_token ) {
+          if (test.operations[i].request.auth_token) {
             var cookie_str = 'seneca-login' + '=' + test.operations[i].request.auth_token
             test_context.auth_token = cookie_str
 
-            var j = request.jar();
-            var cookie = request.cookie( cookie_str )
-            j.setCookie( cookie, url );
+            var j = Request.jar()
+            var cookie = Request.cookie(cookie_str)
+            j.setCookie(cookie, url)
             req.jar = j
           }
 
           var context = {
-            method : test.operations[i].request.method,
-            req : req,
-            suite_context : {},
-            test_context : test_context
+            method: test.operations[i].request.method,
+            req: req,
+            suite_context: {},
+            test_context: test_context
           }
 
-          sendRequest( context, function(err, test_context){
+          sendRequest(context, function (err, test_context) {
             this.log.debug('******************************', err, test_context)
             done()
-          } )
+          })
           return
         }
       }
 
-      if (!found){
-        done("Test url not found")
+      if (!found) {
+        done('Test url not found')
       }
     })
   }
 
-  function genNumber(){
+  function genNumber () {
     var high = 100000
     var low = 0
     return Math.floor(Math.random() * (high - low) + low)
   }
 
-  function genString(){
+  function genString () {
     var len = 8
-    var dict = "abcdefghjkmnpqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ";
+    var dict = 'abcdefghjkmnpqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ'
 
-    var str = "";
+    var str = ''
     for (var i = 0; i < len; i++) {
       str += dict.charAt(Math.floor(Math.random() * dict.length))
     }
@@ -523,6 +521,6 @@ module.exports = function( options ) {
 
 
   this
-    .add( {role: 'suite', cmd: 'run_once'}, runOnce )
-    .add( {role: 'suite', replay: 'request'}, replay_request )
+    .add({role: 'suite', cmd: 'run_once'}, runOnce)
+    .add({role: 'suite', replay: 'request'}, replay_request)
 }
