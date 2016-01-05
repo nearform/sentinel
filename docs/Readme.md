@@ -2,8 +2,6 @@
 > A [Seneca](http://senecajs.org) testing toolkit
 
 
-***
-
 [](../public/favicon.ico)
 
 **Sentinel - a simple to use and configure test systems for Seneca web applications.**
